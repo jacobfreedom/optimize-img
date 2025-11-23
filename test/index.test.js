@@ -33,7 +33,7 @@ describe('ImageOptimizer', () => {
       }).jpeg().toBuffer()
 
       await fs.writeFile(testImagePath, buffer)
-      
+
       // Add small delay for Windows file system to release any potential locks
       if (process.platform === 'win32') {
         await new Promise(resolve => setTimeout(resolve, 50))
@@ -55,7 +55,7 @@ describe('ImageOptimizer', () => {
         0xFF, 0xD9
       ])
       await fs.writeFile(testImagePath, minimalJpegBuffer)
-      
+
       // Add small delay for Windows file system to release any potential locks
       if (process.platform === 'win32') {
         await new Promise(resolve => setTimeout(resolve, 50))

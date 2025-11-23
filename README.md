@@ -50,29 +50,23 @@ Use it for:
 ---
 
 ## 🔣 Supported Formats
-Input
+
+### Input
 Any format supported by Sharp, including (most common):
 
-JPEG / JPG
+* JPEG / JPG
+* PNG
+* WebP
+* AVIF
+* TIFF
 
-PNG
+### Output
+Controlled via `--format`:
 
-WebP
-
-AVIF
-
-TIFF
-
-Output
-Controlled via --format:
-
-webp (default)
-
-jpeg
-
-png
-
-avif
+* webp (default)
+* jpeg
+* png
+* avif
 
 Example:
 

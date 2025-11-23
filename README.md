@@ -241,7 +241,11 @@ Typical pattern:
 * Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
 * Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
 
-It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). This is built for running multiple itterations for the quality regard. After that, I always run geometry/scene optimization in glTF-Transform.
+It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). 
+
+**This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
+
+**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then in your KTX2 pass, use a higher-quality UASTC mode for baseColor and a more compressed ETC1S profile for the ORM. You can even start with 4K source and testing.
 
 ---
 

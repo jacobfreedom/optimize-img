@@ -15,9 +15,9 @@ class WindowsFileUtils {
    */
   static async safeRemove(filePath, options = {}) {
     const {
-      maxRetries = 10,
-      initialDelay = 100,
-      maxDelay = 2000
+      maxRetries = 20,
+      initialDelay = 200,
+      maxDelay = 5000
     } = options
 
     let lastError = null
@@ -171,3 +171,9 @@ class WindowsFileUtils {
 }
 
 module.exports = WindowsFileUtils
+
+console.log('WindowsFileUtils loaded') // Debug log for loading
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception in WindowsFileUtils:', error)
+})

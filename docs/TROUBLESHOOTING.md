@@ -407,6 +407,40 @@ If you encounter "EPERM: operation not permitted, unlink" errors during testing:
    npm install sharp --force
    ```
 
+**Windows Bulk Processing Issues**:
+
+If you encounter "EBUSY: resource busy or locked" errors during bulk directory processing:
+
+1. **Enhanced File Handling**: The application now includes Windows-specific file utilities that automatically retry operations with exponential backoff
+   - Files are processed with buffer-based reading to avoid locks
+   - Cleanup operations use enhanced retry logic (up to 20 attempts)
+   - Parallel processing is automatically throttled on Windows
+
+2. **Regression Testing**: A comprehensive regression test has been added to verify bulk processing stability
+   - Tests processing of 10+ files with parallel operations
+   - Validates cleanup and error handling under load
+   - Ensures no file locks persist after processing
+
+3. **Timeout Handling**: Extended timeouts for Windows operations
+   - Test cleanup operations have extended retry limits
+   - File system operations allow for Windows-specific delays
+   - Bulk processing includes additional stabilization delays
+
+**Windows-Specific Configuration**:
+
+For optimal Windows performance, consider these settings:
+
+```json
+{
+  "parallel": 2,
+  "keepOriginals": true,
+  "stripMetadata": false,
+  "verbose": true
+}
+```
+
+This configuration reduces parallel processing (which can cause file locks), preserves originals (reducing write operations), and enables verbose logging for debugging.
+
 ### macOS Issues
 
 **Problem**: Sharp installation or runtime errors

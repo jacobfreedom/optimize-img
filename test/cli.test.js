@@ -87,7 +87,7 @@ describe('CLI Integration', () => {
             // Continue to next attempt
           }
         }
-        console.warn(`Warning: Could not clean up CLI test directory ${testDir} after 10 attempts: ${lastError.message}`)
+        console.error(`Error: Failed to clean up CLI test directory ${testDir} after 10 attempts: ${lastError.message}. Last error code: ${lastError.code}`)
       } else {
         console.warn(`Warning: Could not clean up CLI test directory ${testDir}: ${error.message}`)
       }
@@ -265,6 +265,32 @@ describe('CLI Integration', () => {
       expect(await fs.pathExists(path.join(subDir, 'optimized', 'image0.webp'))).toBe(true)
       expect(await fs.pathExists(path.join(subDir, 'optimized', 'image1.webp'))).toBe(true)
       expect(await fs.pathExists(path.join(subDir, 'optimized', 'image2.webp'))).toBe(true)
+    })
+
+    it('should handle bulk processing with multiple files and parallel operations (regression test)', async () => {
+      // Create additional test images for bulk processing
+      const sharp = require('sharp')
+      for (let i = 3; i < 10; i++) {
+        await sharp({
+          create: {
+            width: 100,
+            height: 100,
+            channels: 3,
+            background: { r: i * 25, g: i * 25, b: i * 25 }
+          }
+        }).jpeg().toFile(path.join(subDir, `image${i}.jpg`))
+
+        // Add small delay for Windows file system
+        if (process.platform === 'win32') {
+          await new Promise(resolve => setTimeout(resolve, 50))
+        }
+      }
+
+      await runCLI(`${subDir} --bulk --parallel 4`)
+
+      for (let i = 0; i < 10; i++) {
+        expect(await fs.pathExists(path.join(subDir, 'optimized', `image${i}.webp`))).toBe(true)
+      }
     })
   })
 

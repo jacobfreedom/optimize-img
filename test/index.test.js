@@ -55,6 +55,7 @@ describe('ImageOptimizer', () => {
         0xFF, 0xD9
       ])
       await fs.writeFile(testImagePath, minimalJpegBuffer)
+      await new Promise(resolve => setTimeout(resolve, 100))
 
       // Add small delay for Windows file system to release any potential locks
       if (process.platform === 'win32') {
@@ -100,7 +101,7 @@ describe('ImageOptimizer', () => {
             // Continue to next attempt
           }
         }
-        console.warn(`Warning: Could not clean up test directory ${testDir} after 10 attempts: ${lastError.message}`)
+        console.error(`Error: Failed to clean up test directory ${testDir} after 10 attempts: ${lastError.message}. Last error code: ${lastError.code}`)
       } else {
         console.warn(`Warning: Could not clean up test directory ${testDir}: ${error.message}`)
       }

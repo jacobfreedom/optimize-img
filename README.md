@@ -1,4 +1,4 @@
-# Optimize-img
+# optimize-img
 
 A high-performance image optimization CLI for developers with modern format support, bulk processing, and presets.
 
@@ -20,7 +20,7 @@ optimize-img ./images --bulk --preset balanced
 
 ---
 
-## 🌟 Why Optimize-img?
+## 🌟 Why optimize-img?
 
 Originally built for **3D texture optimization**, optimize-img has grown into a general-purpose image pipeline that balances:
 
@@ -276,7 +276,7 @@ Typical pattern:
 * Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
 * Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
 
-It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use optimize-img tool to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget and with a certain material. Afterwads followed by model/scene optimization of glTF-Transform.
+It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). This is built for running multiple itterations for the quality regard. After that, I always run geometry/scene optimization in glTF-Transform.
 
 ---
 

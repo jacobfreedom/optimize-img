@@ -15,9 +15,9 @@ class WindowsFileUtils {
    */
   static async safeRemove(filePath, options = {}) {
     const {
-      maxRetries = 5, // Reduced from 20 to prevent test timeouts
-      initialDelay = 100, // Reduced from 200ms
-      maxDelay = 1000 // Reduced from 5000ms
+      maxRetries = 10, // Increased for Windows file locking robustness
+      initialDelay = 150, // Balanced initial delay
+      maxDelay = 2000 // Maximum delay for Windows file operations
     } = options
 
     let lastError = null

@@ -1,6 +1,6 @@
 # optimize-img
 
-A high-performance image optimization CLI for developers with modern format support, bulk processing, and presets.
+A high-performance image optimization CLI for developers with modern format support, bulk processing of folders and subfolders, and presets.
 
 [![npm version](https://badge.fury.io/js/optimize-img.svg)](https://badge.fury.io/js/optimize-img)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -22,11 +22,11 @@ optimize-img ./images --bulk --preset balanced
 
 ## 🌟 Why optimize-img?
 
-Originally built for **3D texture optimization**, optimize-img has grown into a general-purpose image pipeline that balances:
+Originally built for **3D texture optimization**, optimize_img has grown into a general-purpose image pipeline that balances:
 
 - **Quality** – sensible defaults that don't wreck your images  
 - **Performance** – built on [Sharp](https://sharp.pixelplumbing.com/), highly parallel  
-- **Convenience** – presets, bulk mode, config files, and programmatic use
+- **Convenience** – presets, bulk mode for folders and subfolders, config files, and programmatic use
 
 Use it for:
 

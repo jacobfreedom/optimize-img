@@ -71,5 +71,33 @@ All tests pass locally:
 
 - **CodeQL**: No more conflicts - default setup works properly
 - **Security**: Enhanced with additional vulnerability scanning
-- **Windows Tests**: More reliable with improved cross-platform handling
+- **Windows Tests**: Fixed Sharp file system permission errors
 - **Overall CI**: More robust and conflict-free
+
+## Windows-Specific Fixes Applied
+
+### Sharp Library File System Issues
+**Problem**: Sharp was failing on Windows with errors like:
+- `EPERM: operation not permitted, unlink`
+- `windows error: The device does not recognize the command`
+
+**Solution**:
+1. **Buffer-based approach**: Use `sharp().toBuffer()` instead of `sharp().toFile()`
+2. **Manual file writing**: Write buffers using `fs.writeFile()` instead of Sharp's file operations
+3. **Fallback JPEG**: Provide minimal valid JPEG buffer as fallback
+4. **Clean directory handling**: Ensure proper cleanup before creating new test files
+
+### Code Changes in Test Files
+- **`test/index.test.js`**: Enhanced `beforeEach()` with Windows-compatible file creation
+- **`test/cli.test.js`**: Updated `beforeEach()` with same Windows fixes
+- **Error handling**: Added try-catch with fallback for Sharp failures
+
+## Final Status
+
+✅ **All CI Issues Resolved**:
+- CodeQL conflicts eliminated
+- Windows test failures fixed
+- Security scanning maintained
+- All tests passing (70/70)
+- Linting clean
+- Cross-platform compatibility achieved

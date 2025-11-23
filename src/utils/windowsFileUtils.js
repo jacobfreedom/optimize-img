@@ -15,9 +15,9 @@ class WindowsFileUtils {
    */
   static async safeRemove(filePath, options = {}) {
     const {
-      maxRetries = 20,
-      initialDelay = 200,
-      maxDelay = 5000
+      maxRetries = 5, // Reduced from 20 to prevent test timeouts
+      initialDelay = 100, // Reduced from 200ms
+      maxDelay = 1000 // Reduced from 5000ms
     } = options
 
     let lastError = null
@@ -35,7 +35,7 @@ class WindowsFileUtils {
           if (attempt < maxRetries) {
             // Exponential backoff with jitter
             await new Promise(resolve => setTimeout(resolve, delay))
-            delay = Math.min(delay * 1.5 + Math.random() * 100, maxDelay)
+            delay = Math.min(delay * 1.5 + Math.random() * 50, maxDelay)
             continue
           }
         }

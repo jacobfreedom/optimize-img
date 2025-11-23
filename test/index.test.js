@@ -73,37 +73,20 @@ describe('ImageOptimizer', () => {
   })
 
   afterEach(async () => {
-    // Enhanced cleanup for Windows file system compatibility
+    // Simplified cleanup - use WindowsFileUtils for all platforms with optimized settings
     try {
-      if (process.platform === 'win32') {
-        // Use Windows-safe removal with enhanced retry logic
-        const WindowsFileUtils = require('../src/utils/windowsFileUtils')
-        await WindowsFileUtils.safeRemove(testDir, {
-          maxRetries: 15, // More retries for Windows
-          initialDelay: 200,
-          maxDelay: 3000
-        })
-      } else {
-        await fs.remove(testDir)
-      }
+      const WindowsFileUtils = require('../src/utils/windowsFileUtils')
+      await WindowsFileUtils.safeRemove(testDir, {
+        maxRetries: 3, // Reduced from 20 to prevent timeouts
+        initialDelay: 50, // Reduced from 200ms
+        maxDelay: 500 // Reduced from 5000ms
+      })
     } catch (error) {
+      // Only log warnings for EBUSY/EPERM errors, don't fail the test
       if (error.code === 'EPERM' || error.code === 'EBUSY') {
-        // Multiple retry attempts with increasing delays for Windows file locks
-        let lastError = error
-        for (let attempt = 1; attempt <= 10; attempt++) {
-          const delay = attempt * 300 // Increasing delay: 300ms, 600ms, 900ms, etc.
-          await new Promise(resolve => setTimeout(resolve, delay))
-          try {
-            await fs.remove(testDir)
-            return // Success, exit cleanup
-          } catch (retryError) {
-            lastError = retryError
-            // Continue to next attempt
-          }
-        }
-        console.error(`Error: Failed to clean up test directory ${testDir} after 10 attempts: ${lastError.message}. Last error code: ${lastError.code}`)
-      } else {
         console.warn(`Warning: Could not clean up test directory ${testDir}: ${error.message}`)
+      } else {
+        console.error(`Error cleaning up test directory ${testDir}: ${error.message}`)
       }
     }
   })

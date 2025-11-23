@@ -947,3 +947,34 @@ FAIL test/index.test.js (662.736 s)
       77 |       if (process.platform === 'win32') {
 
       at afterEach (test/index.test.js:74:3)
+      at Object.describe (test/index.test.js:6:1)
+
+  ● ImageOptimizer › logging › should not log when verbose is disabled
+
+    EBUSY: resource busy or locked, unlink 'D:\a\optimize-img\optimize-img\test\temp-test\test-image-optimized.webp'
+
+
+
+  ● ImageOptimizer › logging › should not log when verbose is disabled
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      72 |   })
+      73 |
+    > 74 |   afterEach(async () => {
+         |   ^
+      75 |     // Enhanced cleanup for Windows file system compatibility
+      76 |     try {
+      77 |       if (process.platform === 'win32') {
+
+      at afterEach (test/index.test.js:74:3)
+      at Object.describe (test/index.test.js:6:1)
+
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+Test Suites: 2 failed, 1 passed, 3 total
+Tests:       26 failed, 44 passed, 70 total
+Snapshots:   0 total
+Time:        663.491 s
+Ran all test suites.
+Error: Process completed with exit code 1.

@@ -360,9 +360,9 @@ Processing time: 124ms
 
 To keep this README lean:
 
-* **Configuration & Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md#configuration`](./docs/PROGRAMMATIC_USAGE.md#configuration)
 * **Examples** → [`docs/EXAMPLES.md`](./docs/EXAMPLES.md)
 * **Troubleshooting** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
+* **Configuration & Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md#configuration`](./docs/PROGRAMMATIC_USAGE.md#configuration)
 
 
 You'll find:

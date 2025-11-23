@@ -14,10 +14,12 @@ class WindowsFileUtils {
    * @returns {Promise<void>}
    */
   static async safeRemove(filePath, options = {}) {
+    // Platform-specific defaults for file locking robustness
+    const isWindows = process.platform === 'win32'
     const {
-      maxRetries = 10, // Increased for Windows file locking robustness
-      initialDelay = 150, // Balanced initial delay
-      maxDelay = 2000 // Maximum delay for Windows file operations
+      maxRetries = isWindows ? 15 : 5, // More retries for Windows file locking
+      initialDelay = isWindows ? 200 : 100, // Longer initial delay for Windows
+      maxDelay = isWindows ? 3000 : 1000 // Maximum delay for Windows file operations
     } = options
 
     let lastError = null

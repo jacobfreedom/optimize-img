@@ -6,6 +6,7 @@ const cliProgress = require('cli-progress')
 const glob = require('glob')
 const pLimit = require('p-limit')
 const { validateQuality, validateFormat } = require('./config')
+const WindowsFileUtils = require('./utils/windowsFileUtils')
 
 class ImageOptimizer {
   constructor(options = {}) {
@@ -167,7 +168,13 @@ class ImageOptimizer {
       await fs.ensureDir(path.dirname(outputPath))
 
       // Process image with Windows file lock prevention
-      sharpInstance = sharp(inputPath)
+      if (process.platform === 'win32') {
+        // On Windows, read file to buffer first to avoid file locks
+        const fileBuffer = await fs.readFile(inputPath)
+        sharpInstance = sharp(fileBuffer)
+      } else {
+        sharpInstance = sharp(inputPath)
+      }
 
       // Apply resize if specified
       if (width || height) {
@@ -239,7 +246,13 @@ class ImageOptimizer {
 
       // Write output using buffer approach for Windows compatibility
       const outputBuffer = await sharpInstance.toFormat(validatedFormat, formatOptions).toBuffer()
-      await fs.writeFile(outputPath, outputBuffer)
+
+      // Use Windows-safe file writing
+      if (process.platform === 'win32') {
+        await WindowsFileUtils.safeWrite(outputPath, outputBuffer)
+      } else {
+        await fs.writeFile(outputPath, outputBuffer)
+      }
 
       // Get new file size
       const newSize = (await fs.stat(outputPath)).size
@@ -254,16 +267,20 @@ class ImageOptimizer {
       // Delete original if requested
       if (deleteOriginals && inputPath !== outputPath) {
         try {
-          await fs.remove(inputPath)
+          if (process.platform === 'win32') {
+            await WindowsFileUtils.safeRemove(inputPath)
+          } else {
+            await fs.remove(inputPath)
+          }
           this.log(`Deleted original file: ${inputPath}`, 'info')
         } catch (deleteError) {
           // Handle Windows file system permission issues
           if (deleteError.code === 'EPERM' || deleteError.code === 'EBUSY') {
             this.log(`Warning: Could not delete original file ${inputPath} due to file system constraints. File may be locked or in use.`, 'warning')
-            // Try again with a delay for Windows compatibility
+            // Try again with enhanced Windows utilities
             try {
-              await new Promise(resolve => setTimeout(resolve, 100))
-              await fs.remove(inputPath)
+              await WindowsFileUtils.forceCleanup(inputPath)
+              await WindowsFileUtils.safeRemove(inputPath)
               this.log(`Successfully deleted original file: ${inputPath}`, 'info')
             } catch (retryError) {
               this.log(`Warning: Still could not delete original file ${inputPath} after retry. Error: ${retryError.message}`, 'warning')
@@ -288,11 +305,29 @@ class ImageOptimizer {
       if (sharpInstance) {
         try {
           // Force cleanup of Sharp instance
-          sharpInstance.destroy?.()
+          if (typeof sharpInstance.destroy === 'function') {
+            sharpInstance.destroy()
+          }
           sharpInstance = null
-          // Add delay for Windows file system to release locks
+
+          // Enhanced cleanup for Windows file system
           if (process.platform === 'win32') {
-            await new Promise(resolve => setTimeout(resolve, 50))
+            // Force garbage collection if available
+            if (global.gc) {
+              global.gc()
+            }
+
+            // Wait for file system to stabilize
+            await new Promise(resolve => setTimeout(resolve, 100))
+
+            // Force cleanup of any lingering file handles
+            try {
+              if (inputPath && await fs.pathExists(inputPath)) {
+                await WindowsFileUtils.forceCleanup(inputPath)
+              }
+            } catch (cleanupError) {
+              // Ignore cleanup errors for input path
+            }
           }
         } catch (cleanupError) {
           this.log(`Warning: Error cleaning up Sharp instance: ${cleanupError.message}`, 'warning')

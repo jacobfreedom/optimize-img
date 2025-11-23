@@ -61,13 +61,23 @@ describe('CLI Integration', () => {
   afterEach(async () => {
     // Enhanced cleanup for Windows file system compatibility
     try {
-      await fs.remove(testDir)
+      if (process.platform === 'win32') {
+        // Use Windows-safe removal with enhanced retry logic
+        const WindowsFileUtils = require('../src/utils/windowsFileUtils')
+        await WindowsFileUtils.safeRemove(testDir, {
+          maxRetries: 15, // More retries for Windows
+          initialDelay: 200,
+          maxDelay: 3000
+        })
+      } else {
+        await fs.remove(testDir)
+      }
     } catch (error) {
       if (error.code === 'EPERM' || error.code === 'EBUSY') {
         // Multiple retry attempts with increasing delays for Windows file locks
         let lastError = error
-        for (let attempt = 1; attempt <= 5; attempt++) {
-          const delay = attempt * 200 // Increasing delay: 200ms, 400ms, 600ms, 800ms, 1000ms
+        for (let attempt = 1; attempt <= 10; attempt++) {
+          const delay = attempt * 300 // Increasing delay: 300ms, 600ms, 900ms, etc.
           await new Promise(resolve => setTimeout(resolve, delay))
           try {
             await fs.remove(testDir)
@@ -77,7 +87,7 @@ describe('CLI Integration', () => {
             // Continue to next attempt
           }
         }
-        console.warn(`Warning: Could not clean up CLI test directory ${testDir} after 5 attempts: ${lastError.message}`)
+        console.warn(`Warning: Could not clean up CLI test directory ${testDir} after 10 attempts: ${lastError.message}`)
       } else {
         console.warn(`Warning: Could not clean up CLI test directory ${testDir}: ${error.message}`)
       }

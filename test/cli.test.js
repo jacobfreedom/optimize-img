@@ -31,7 +31,9 @@ describe('CLI Integration', () => {
     return new Promise((resolve, reject) => {
       // Add --yes flag to prevent interactive prompts in tests
       const safeArgs = args.includes('--yes') ? args : `${args} --yes`
-      exec(`node ${cliPath} ${safeArgs}`, (error, stdout, stderr) => {
+      // Use cross-platform command execution
+      const command = process.platform === 'win32' ? 'node.exe' : 'node'
+      exec(`${command} "${cliPath}" ${safeArgs}`, (error, stdout, stderr) => {
         if (error) {
           // Reject with an object that matches the expected format for destructuring
           // eslint-disable-next-line prefer-promise-reject-errors

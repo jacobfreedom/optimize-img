@@ -218,25 +218,7 @@ Aspect ratio is preserved unless both width and height force a different ratio.
 
 ---
 
-## 🔌 Integrations (optional)
 
-Minimal example with npm scripts:
-
-```json
-{
-  "scripts": {
-    "optimize:images": "optimize-img ./src/assets/images --bulk --preset balanced"
-  }
-}
-```
-
-Run:
-
-```bash
-npm run optimize:images
-```
-
----
 
 ## 🎮 Real-time 3D / Engine Workflows
 

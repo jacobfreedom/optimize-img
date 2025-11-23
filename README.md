@@ -245,7 +245,7 @@ It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-p
 
 **This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
 
-**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then in your KTX2 pass, use a higher-quality UASTC mode for baseColor and a more compressed ETC1S profile for the ORM. You can even start with 4K source and keep quality testing.
+**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then in your KTX2 pass, use a higher-quality UASTC mode for baseColor and a more compressed ETC1S profile for the ORM slot. You can even start with 4K source and keep quality testing.
 
 ---
 

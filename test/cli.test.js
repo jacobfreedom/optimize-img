@@ -49,7 +49,22 @@ describe('CLI Integration', () => {
   })
 
   afterEach(async () => {
-    await fs.remove(testDir)
+    // Enhanced cleanup for Windows file system compatibility
+    try {
+      await fs.remove(testDir)
+    } catch (error) {
+      if (error.code === 'EPERM' || error.code === 'EBUSY') {
+        // Try with delay for Windows file locks
+        await new Promise(resolve => setTimeout(resolve, 200))
+        try {
+          await fs.remove(testDir)
+        } catch (retryError) {
+          console.warn(`Warning: Could not clean up CLI test directory ${testDir}: ${retryError.message}`)
+        }
+      } else {
+        console.warn(`Warning: Could not clean up CLI test directory ${testDir}: ${error.message}`)
+      }
+    }
   })
 
   function runCLI(args) {

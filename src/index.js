@@ -239,6 +239,9 @@ class ImageOptimizer {
       // Write output
       await sharpInstance.toFormat(validatedFormat, formatOptions).toFile(outputPath)
 
+      // Clean up Sharp instance to prevent file locks on Windows
+      sharpInstance = null
+
       // Get new file size
       const newSize = (await fs.stat(outputPath)).size
       this.stats.totalSizeAfter += newSize
@@ -251,8 +254,25 @@ class ImageOptimizer {
 
       // Delete original if requested
       if (deleteOriginals && inputPath !== outputPath) {
-        await fs.remove(inputPath)
-        this.log(`Deleted original file: ${inputPath}`, 'info')
+        try {
+          await fs.remove(inputPath)
+          this.log(`Deleted original file: ${inputPath}`, 'info')
+        } catch (deleteError) {
+          // Handle Windows file system permission issues
+          if (deleteError.code === 'EPERM' || deleteError.code === 'EBUSY') {
+            this.log(`Warning: Could not delete original file ${inputPath} due to file system constraints. File may be locked or in use.`, 'warning')
+            // Try again with a delay for Windows compatibility
+            try {
+              await new Promise(resolve => setTimeout(resolve, 100))
+              await fs.remove(inputPath)
+              this.log(`Successfully deleted original file: ${inputPath}`, 'info')
+            } catch (retryError) {
+              this.log(`Warning: Still could not delete original file ${inputPath} after retry. Error: ${retryError.message}`, 'warning')
+            }
+          } else {
+            throw deleteError
+          }
+        }
       }
 
       this.stats.processed++

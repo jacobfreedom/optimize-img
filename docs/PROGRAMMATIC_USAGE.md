@@ -34,3 +34,51 @@ const photoOptimizer = new ImageOptimizer({
 
 await photoOptimizer.run('./client-photos');
 ```
+
+---
+
+## ⚙️ Configuration
+
+### `.optimize-imgrc`
+
+```json
+{
+  "format": "webp",
+  "quality": 85,
+  "stripMetadata": true,
+  "keepOriginals": true,
+  "parallel": 8,
+  "preset": "balanced",
+  "width": null,
+  "height": null
+}
+```
+
+### `optimize-img.config.js`
+
+```js
+module.exports = {
+  format: 'webp',
+  quality: 85,
+  stripMetadata: true,
+  keepOriginals: true,
+  parallel: 8,
+  preset: 'balanced',
+
+  development: {
+    keepOriginals: true,
+    verbose: true
+  },
+
+  production: {
+    preset: 'performant',
+    parallel: 16
+  }
+};
+```
+
+> **Note:**
+> Config keys use **camelCase** (`stripMetadata`).
+> CLI uses **kebab-case** (`--keep-metadata`).
+> CLI flags override config.
+> If both files exist, `optimize-img.config.js` wins.

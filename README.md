@@ -354,63 +354,16 @@ Processing time: 124ms
 
 ---
 
-## ⚙️ Configuration
 
-### `.optimize-imgrc`
-
-```json
-{
-  "format": "webp",
-  "quality": 85,
-  "stripMetadata": true,
-  "keepOriginals": true,
-  "parallel": 8,
-  "preset": "balanced",
-  "width": null,
-  "height": null
-}
-```
-
-### `optimize-img.config.js`
-
-```js
-module.exports = {
-  format: 'webp',
-  quality: 85,
-  stripMetadata: true,
-  keepOriginals: true,
-  parallel: 8,
-  preset: 'balanced',
-
-  development: {
-    keepOriginals: true,
-    verbose: true
-  },
-
-  production: {
-    preset: 'performant',
-    parallel: 16
-  }
-};
-```
-
-> **Note:**
-> Config keys use **camelCase** (`stripMetadata`).
-> CLI uses **kebab-case** (`--keep-metadata`).
-> CLI flags override config.
-> If both files exist, `optimize-img.config.js` wins.
-
-
-
----
 
 ## 🛠️ Troubleshooting & Examples
 
 To keep this README lean:
 
+* **Configuration & Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md#configuration`](./docs/PROGRAMMATIC_USAGE.md#configuration)
 * **Examples** → [`docs/EXAMPLES.md`](./docs/EXAMPLES.md)
 * **Troubleshooting** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
-* **Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md`](./docs/PROGRAMMATIC_USAGE.md)
+
 
 You'll find:
 

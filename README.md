@@ -218,37 +218,6 @@ Aspect ratio is preserved unless both width and height force a different ratio.
 
 ---
 
-
-
-## 🎮 Real-time 3D / Engine Workflows
-
-`optimize-img` started as a 3D texture tool. Common use:
-
-```bash
-# 4K → 2K (high quality)
-optimize-img ./textures/4k --bulk --resize 1/2 --format webp --quality 90
-
-# 2K → 1K (mid-tier)
-optimize-img ./textures/2k --bulk --resize 1/2 --format webp --quality 80
-
-# Mobile / low-spec
-optimize-img ./textures/final --bulk --resize 1/2 --preset performant
-```
-
-Typical pattern:
-
-* Use ratios (`1/2`, `1/4`) to keep texture sets consistent (4K→2K→1K).
-* Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
-* Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
-
-It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). 
-
-**This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
-
-**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then in your KTX2 pass, use a higher-quality UASTC mode for baseColor and a more compressed ETC1S profile for the ORM slot. You can even start with 4K source and keep quality testing.
-
----
-
 ## 📁 Bulk Mode & Safety
 
 What `--bulk` does:
@@ -285,6 +254,35 @@ optimize-img ./photos --bulk --yes
 # Delete originals ONLY when the optimized file is smaller
 optimize-img ./images --bulk --delete-originals
 ```
+
+---
+
+## 🎮 Real-time 3D / Engine Workflows
+
+`optimize-img` started as a 3D texture tool. Common use:
+
+```bash
+# 4K → 2K (high quality)
+optimize-img ./textures/4k --bulk --resize 1/2 --format webp --quality 90
+
+# 2K → 1K (mid-tier)
+optimize-img ./textures/2k --bulk --resize 1/2 --format webp --quality 80
+
+# Mobile / low-spec
+optimize-img ./textures/final --bulk --resize 1/2 --preset performant
+```
+
+Typical pattern:
+
+* Use ratios (`1/2`, `1/4`) to keep texture sets consistent (4K→2K→1K).
+* Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
+* Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
+
+It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). 
+
+**This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
+
+**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then in your KTX2 pass, use a higher-quality UASTC mode for baseColor and a more compressed ETC1S profile for the ORM slot. You can even start with 4K source and keep quality testing.
 
 ---
 

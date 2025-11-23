@@ -389,7 +389,6 @@ Issues and PRs welcome.
 
 ---
 
-**Pro tip:**
 Start with:
 
 ```bash

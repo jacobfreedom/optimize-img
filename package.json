@@ -1,0 +1,73 @@
+{
+  "name": "optimize-img",
+  "version": "1.0.0",
+  "description": "A comprehensive, high-performance image optimization tool for developers with WebP/JPEG/PNG support, bulk processing, and configurable presets",
+  "main": "src/index.js",
+  "bin": {
+    "optimize-img": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/ bin/ test/",
+    "lint:fix": "eslint src/ bin/ test/ --fix",
+    "build": "echo 'No build step required for Node.js project'",
+    "prepublishOnly": "npm test && npm run lint"
+  },
+  "keywords": [
+    "image",
+    "optimization",
+    "webp",
+    "jpeg",
+    "png",
+    "sharp",
+    "cli",
+    "bulk-processing",
+    "performance",
+    "compression",
+    "resize",
+    "conversion"
+  ],
+  "author": "Jakub Svoboda (https://github.com/jacobfreedom)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobfreedom/optimize-img.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jacobfreedom/optimize-img/issues"
+  },
+  "homepage": "https://github.com/jacobfreedom/optimize-img#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0",
+    "commander": "^11.1.0",
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "cosmiconfig": "^9.0.0",
+    "p-limit": "^3.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

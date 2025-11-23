@@ -1,0 +1,263 @@
+const { exec } = require('child_process')
+const path = require('path')
+const fs = require('fs-extra')
+
+describe('CLI Integration', () => {
+  const cliPath = path.join(__dirname, '../bin/cli.js')
+  const testDir = path.join(__dirname, 'temp-cli')
+  let testImagePath
+
+  beforeEach(async () => {
+    await fs.ensureDir(testDir)
+    testImagePath = path.join(testDir, 'test.jpg')
+
+    // Create a simple test image using a data URL approach
+    const sharp = require('sharp')
+    await sharp({
+      create: {
+        width: 100,
+        height: 100,
+        channels: 3,
+        background: { r: 255, g: 0, b: 0 }
+      }
+    }).jpeg().toFile(testImagePath)
+  })
+
+  afterEach(async () => {
+    await fs.remove(testDir)
+  })
+
+  function runCLI(args) {
+    return new Promise((resolve, reject) => {
+      // Add --yes flag to prevent interactive prompts in tests
+      const safeArgs = args.includes('--yes') ? args : `${args} --yes`
+      exec(`node ${cliPath} ${safeArgs}`, (error, stdout, stderr) => {
+        if (error) {
+          // Reject with an object that matches the expected format for destructuring
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject({ error, stdout, stderr })
+        } else {
+          resolve({ stdout, stderr })
+        }
+      })
+    })
+  }
+
+  describe('help and version', () => {
+    it('should show help when no arguments provided', async () => {
+      try {
+        await runCLI('')
+      } catch ({ stdout }) {
+        expect(stdout).toContain('Usage:')
+        expect(stdout).toContain('optimize-img')
+      }
+    })
+
+    it('should show version', async () => {
+      const { stdout } = await runCLI('--version')
+      expect(stdout).toMatch(/\d+\.\d+\.\d+/)
+    })
+
+    it('should show help with --help', async () => {
+      const { stdout } = await runCLI('--help')
+      expect(stdout).toContain('Usage:')
+      expect(stdout).toContain('--format')
+      expect(stdout).toContain('--quality')
+    })
+  })
+
+  describe('preset command', () => {
+    it('should list available presets', async () => {
+      const { stdout } = await runCLI('preset')
+      expect(stdout).toContain('Available presets:')
+      expect(stdout).toContain('default')
+      expect(stdout).toContain('balanced')
+      expect(stdout).toContain('quality')
+      expect(stdout).toContain('performant')
+    })
+  })
+
+  describe('formats command', () => {
+    it('should list supported formats', async () => {
+      const { stdout } = await runCLI('formats')
+      expect(stdout).toContain('Supported input formats:')
+      expect(stdout).toContain('Supported output formats:')
+      expect(stdout).toContain('JPEG')
+      expect(stdout).toContain('WebP')
+    })
+  })
+
+  describe('file processing', () => {
+    it('should process single file', async () => {
+      const outputPath = path.join(testDir, 'test-optimized.webp')
+
+      await runCLI(`${testImagePath}`)
+
+      expect(await fs.pathExists(outputPath)).toBe(true)
+    })
+
+    it('should process file with custom output', async () => {
+      const customOutput = path.join(testDir, 'custom.webp')
+
+      await runCLI(`${testImagePath} -o ${customOutput}`)
+
+      expect(await fs.pathExists(customOutput)).toBe(true)
+    })
+
+    it('should process file with custom format', async () => {
+      const outputPath = path.join(testDir, 'test-optimized.png')
+
+      await runCLI(`${testImagePath} --format png`)
+
+      expect(await fs.pathExists(outputPath)).toBe(true)
+    })
+
+    it('should process file with custom quality', async () => {
+      const outputPath = path.join(testDir, 'test-optimized.webp')
+
+      await runCLI(`${testImagePath} --quality 90`)
+
+      expect(await fs.pathExists(outputPath)).toBe(true)
+    })
+
+    it('should process file with resize options', async () => {
+      const outputPath = path.join(testDir, 'test-optimized.webp')
+
+      await runCLI(`${testImagePath} --width 50 --height 50`)
+
+      expect(await fs.pathExists(outputPath)).toBe(true)
+    })
+
+    it('should process file with preset', async () => {
+      const outputPath = path.join(testDir, 'test-optimized.webp')
+
+      await runCLI(`${testImagePath} --preset quality`)
+
+      expect(await fs.pathExists(outputPath)).toBe(true)
+    })
+
+    it('should delete originals when specified', async () => {
+      await runCLI(`${testImagePath} --delete-originals --yes`)
+
+      expect(await fs.pathExists(testImagePath)).toBe(false)
+      // When deleteOriginals is true, the file is replaced in-place
+      expect(await fs.pathExists(path.join(testDir, 'test.webp'))).toBe(true)
+    })
+
+    it('should keep metadata when specified', async () => {
+      await runCLI(`${testImagePath} --keep-metadata`)
+
+      expect(await fs.pathExists(path.join(testDir, 'test-optimized.webp'))).toBe(true)
+    })
+  })
+
+  describe('directory processing', () => {
+    let subDir
+
+    beforeEach(async () => {
+      subDir = path.join(testDir, 'images')
+      await fs.ensureDir(subDir)
+
+      // Create multiple test images
+      const sharp = require('sharp')
+      for (let i = 0; i < 3; i++) {
+        await sharp({
+          create: {
+            width: 100,
+            height: 100,
+            channels: 3,
+            background: { r: i * 50, g: 0, b: 0 }
+          }
+        }).jpeg().toFile(path.join(subDir, `image${i}.jpg`))
+      }
+    })
+
+    it('should process directory with bulk flag', async () => {
+      await runCLI(`${subDir} --bulk`)
+
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image0.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image1.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image2.webp'))).toBe(true)
+    })
+
+    it('should process directory with custom output', async () => {
+      const outputDir = path.join(testDir, 'output')
+
+      await runCLI(`${subDir} --bulk -o ${outputDir}/`)
+
+      expect(await fs.pathExists(path.join(outputDir, 'image0.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(outputDir, 'image1.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(outputDir, 'image2.webp'))).toBe(true)
+    })
+
+    it('should process directory with parallel processing', async () => {
+      await runCLI(`${subDir} --bulk --parallel 2`)
+
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image0.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image1.webp'))).toBe(true)
+      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image2.webp'))).toBe(true)
+    })
+  })
+
+  describe('error handling', () => {
+    it('should handle non-existent input file', async () => {
+      try {
+        await runCLI('./non-existent.jpg')
+      } catch ({ stderr }) {
+        expect(stderr).toContain('Error:')
+      }
+    })
+
+    it('should handle non-existent directory', async () => {
+      try {
+        await runCLI('./non-existent-dir --bulk')
+      } catch ({ stderr }) {
+        expect(stderr).toContain('Error:')
+      }
+    })
+
+    it('should handle invalid quality values', async () => {
+      try {
+        await runCLI(`${testImagePath} --quality 150`)
+      } catch ({ stderr }) {
+        expect(stderr).toContain('Error:')
+      }
+    })
+
+    it('should handle invalid format', async () => {
+      try {
+        await runCLI(`${testImagePath} --format bmp`)
+      } catch ({ stderr }) {
+        expect(stderr).toContain('Error:')
+      }
+    })
+  })
+
+  describe('verbose mode', () => {
+    it('should show verbose output when enabled', async () => {
+      const { stdout } = await runCLI(`${testImagePath} --verbose`)
+      expect(stdout).toContain('Processing')
+    })
+  })
+
+  describe('configuration file', () => {
+    it('should load configuration from file', async () => {
+      const configPath = path.join(testDir, 'test-config.json')
+      await fs.writeJSON(configPath, {
+        format: 'png',
+        quality: 90
+      })
+
+      const { stdout, stderr } = await runCLI(`${testImagePath} --config ${configPath}`)
+      console.log('stdout:', stdout)
+      console.log('stderr:', stderr)
+
+      // Check what files exist after processing
+      const files = await fs.readdir(testDir)
+      console.log('Files after processing:', files)
+
+      // The output should be test.png based on the input filename
+      expect(await fs.pathExists(path.join(testDir, 'test-optimized.png'))).toBe(true)
+    })
+  })
+})

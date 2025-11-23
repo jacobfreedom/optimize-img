@@ -9,6 +9,17 @@ A high-performance image optimization CLI for developers with modern format supp
 
 ---
 
+## ⚡ TL;DR
+
+```bash
+npm install -g optimize-img
+
+# Optimize all images in a folder
+optimize-img ./images --bulk --preset balanced
+```
+
+---
+
 ## 🌟 Why Optimize-img?
 
 Originally built for **3D texture optimization**, optimize-img has grown into a general-purpose image pipeline that balances:
@@ -28,14 +39,50 @@ Use it for:
 ## ✨ Features at a Glance
 
 - 🚀 **Fast** – Sharp-based, parallel processing (`--parallel`)
-- 🧩 **Formats** – WebP (default), JPEG, PNG, AVIF
+- 🧩 **Formats** – WebP (default), JPEG, PNG, AVIF output
 - 📁 **Bulk Mode** – `--bulk` recursively processes folders
 - 🎛️ **Presets** – `default`, `balanced`, `quality`, `performant`
 - 📏 **Resizing** – width/height, ratios (`1/2`, `1/4`), or percent
 - 🧾 **Metadata** – **strips EXIF/ICC by default** for privacy/size, `--keep-metadata` if you need it
 - 📊 **Stats** – progress bar + before/after size reduction
 - 🧪 **3D-Friendly** – ideal for quickly downscaling/testing texture sets
-- 🧩 **Config + API** – `.optimize-imgrc` / `optimize-img.config.js` + Node API
+
+---
+
+## 🔣 Supported Formats
+Input
+Any format supported by Sharp, including (most common):
+
+JPEG / JPG
+
+PNG
+
+WebP
+
+AVIF
+
+TIFF
+
+Output
+Controlled via --format:
+
+webp (default)
+
+jpeg
+
+png
+
+avif
+
+Example:
+
+```bash
+# PNG → WebP (default)
+optimize-img image.png
+
+# JPEG → AVIF
+optimize-img photo.jpg --format avif
+```
 
 ---
 
@@ -58,6 +105,18 @@ optimize-img --help
 ```bash
 npm install optimize-img
 ```
+
+To use `optimize-img` in your project's `package.json` scripts, you can add it like this:
+
+```json
+{
+  "scripts": {
+    "optimize": "optimize-img ./path/to/images --bulk --preset balanced"
+  }
+}
+```
+
+Then run it with `npm run optimize`.
 
 ### Requirements
 
@@ -176,27 +235,22 @@ Aspect ratio is preserved unless both width and height force a different ratio.
 
 ---
 
-## 🌐 Web Integration (Copy/Paste Recipes)
+## 🔌 Integrations (optional)
 
-### package.json Scripts
+Minimal example with npm scripts:
 
 ```json
 {
   "scripts": {
-    "optimize:images": "optimize-img ./src/assets/images --bulk --preset balanced",
-    "optimize:thumbs": "optimize-img ./src/assets/thumbs --bulk --resize 1/2 --preset performant",
-    "build:images": "npm run optimize:images && npm run optimize:thumbs"
+    "optimize:images": "optimize-img ./src/assets/images --bulk --preset balanced"
   }
 }
 ```
 
-### CI Example (GitHub Actions)
+Run:
 
-```yaml
-- name: Optimize Images
-  run: |
-    npm install -g optimize-img
-    optimize-img ./public/images --bulk --preset balanced --yes
+```bash
+npm run optimize:images
 ```
 
 ---
@@ -222,7 +276,7 @@ Typical pattern:
 * Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
 * Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
 
-It **doesn't** replace engine-specific formats (KTX2, BCn…), it's a fast pre-processing / testing step before final import.
+It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use optimize-img tool to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget and with a certain material. Afterwads followed by model/scene optimization of glTF-Transform.
 
 ---
 
@@ -377,44 +431,7 @@ module.exports = {
 > CLI flags override config.
 > If both files exist, `optimize-img.config.js` wins.
 
----
 
-## 🔧 Programmatic Usage
-
-```js
-const ImageOptimizer = require('optimize-img');
-
-const optimizer = new ImageOptimizer({
-  format: 'webp',
-  quality: 85,
-  stripMetadata: true,
-  keepOriginals: false,
-  width: 1200,
-  height: 800,
-  verbose: true
-});
-
-await optimizer.run('./input.jpg');   // single file
-await optimizer.run('./images');      // directory
-
-console.log(`Processed: ${optimizer.stats.processed} files`);
-console.log(`Total before: ${optimizer.stats.totalSizeBefore} bytes`);
-console.log(`Total after:  ${optimizer.stats.totalSizeAfter} bytes`);
-```
-
-**Photography / archival example:**
-
-```js
-const photoOptimizer = new ImageOptimizer({
-  format: 'jpeg',
-  quality: 95,
-  stripMetadata: false, // keep EXIF/ICC
-  keepOriginals: true,
-  verbose: true
-});
-
-await photoOptimizer.run('./client-photos');
-```
 
 ---
 
@@ -424,6 +441,7 @@ To keep this README lean:
 
 * **Examples** → [`docs/EXAMPLES.md`](./docs/EXAMPLES.md)
 * **Troubleshooting** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
+* **Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md`](./docs/PROGRAMMATIC_USAGE.md)
 
 You'll find:
 
@@ -436,8 +454,6 @@ You'll find:
 ## 📄 License
 
 MIT – see [LICENSE](./LICENSE).
-
-**Copyright (c) 2025 [Jakub Svoboda](https://github.com/jacobfreedom)**
 
 ---
 

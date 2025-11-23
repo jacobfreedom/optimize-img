@@ -4,7 +4,6 @@ A high-performance image optimization CLI for developers with modern format supp
 
 [![npm version](https://badge.fury.io/js/optimize-img.svg)](https://badge.fury.io/js/optimize-img)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/node/v/optimize-img.svg)](https://nodejs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-optimize--img-181717.svg)](https://github.com/jacobfreedom)
 
 ---
@@ -217,6 +216,10 @@ optimize-img photo.jpg --width 800 --height 600
 Aspect ratio is preserved unless both width and height force a different ratio.
 
 ---
+
+
+
+
 
 ## 📁 Bulk Mode & Safety
 

@@ -1,7 +1,7 @@
 {
   "name": "optimize-img",
   "version": "1.0.0",
-  "description": "A comprehensive, high-performance image optimization tool for developers with WebP/JPEG/PNG support, bulk processing, and configurable presets",
+  "description": "High-performance image optimization CLI with modern format support, bulk processing, and presets for developers",
   "main": "src/index.js",
   "bin": {
     "optimize-img": "./bin/cli.js"
@@ -65,6 +65,8 @@
     "src/",
     "bin/",
     "README.md",
+    "EXAMPLES.md",
+    "TROUBLESHOOTING.md",
     "LICENSE"
   ],
   "publishConfig": {

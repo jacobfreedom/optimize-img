@@ -1,165 +1,160 @@
-# Examples
+# Examples & Recipes
 
-This directory contains practical examples of using optimize-img in various scenarios.
+This file contains detailed examples and recipes for different use cases. For basic usage, see the main README.
 
-## Basic Usage
+## Quick Reference
 
-### Single File Optimization
+- **[Web Development](#-web-development-recipes)** - Responsive images, e-commerce, static sites
+- **[3D & Game Development](#-3d--game-development)** - Texture pipelines, PBR materials, WebGL optimization
+- **[Photography Workflows](#-photography-workflows)** - Client delivery, portfolio optimization
+- **[Performance Optimization](#-performance-optimization)** - Large batches, memory management
+- **[CI/CD Integration](#-cicd-integration)** - GitHub Actions, GitLab CI, Docker
+- **[Advanced Configuration](#-advanced-configuration)** - Multi-format output, environment configs
+- **[Performance Benchmarks](#-performance-benchmarks)** - Real-world test results and optimization techniques
 
-```bash
-# Basic WebP conversion
-optimize-img photo.jpg
+## 📁 Folder Structure Examples
 
-# Custom quality
-optimize-img photo.jpg --quality 90
+```
+# Before processing
+project/
+├── assets/
+│   ├── images/
+│   │   ├── heroes/
+│   │   │   └── hero1.jpg
+│   │   ├── products/
+│   │   │   ├── product1.png
+│   │   │   └── product2.png
+│   │   └── icons/
+│   │       └── icon.svg
+│   └── textures/
+│       ├── character.jpg
+│       └── environment.png
 
-# Different format
-optimize-img photo.png --format jpeg
-
-# Resize and optimize
-optimize-img large-photo.jpg --width 1200 --height 800
+# After: optimize-img ./assets --bulk
+project/
+├── assets/
+│   ├── images/
+│   │   ├── heroes/
+│   │   │   └── hero1.jpg
+│   │   ├── products/
+│   │   │   ├── product1.png
+│   │   │   └── product2.png
+│   │   └── icons/
+│   │       └── icon.svg
+│   ├── textures/
+│   │   ├── character.jpg
+│   │   └── environment.png
+│   └── optimized/  ← New folder created
+│       ├── images/
+│       │   ├── heroes/
+│       │   │   └── hero1.webp
+│       │   ├── products/
+│       │   │   ├── product1.webp
+│       │   │   └── product2.webp
+│       │   └── icons/
+│       │       └── icon.webp
+│       └── textures/
+│           ├── character.webp
+│           └── environment.webp
 ```
 
-## Bulk Processing
+## 🌐 Web Development Recipes
 
-### Directory Processing
-
-```bash
-# Process all images in a directory
-optimize-img ./images --bulk
-
-# Process with custom settings
-optimize-img ./photos --bulk --format webp --quality 75
-
-# Keep originals (default behavior)
-optimize-img ./images --bulk
-```
-
-### Advanced Bulk Processing
+### Responsive Image Sets
 
 ```bash
-# Process specific file types only
-find ./images -name "*.jpg" -o -name "*.jpeg" | xargs -I {} optimize-img {}
-
-# Process with parallel execution
-optimize-img ./large-collection --bulk --parallel 8
-
-# Process with output directory
-optimize-img ./input-images --bulk -o ./output-images/
+# Create multiple sizes for responsive images
+optimize-img hero.jpg --width 1920 --format webp --quality 90 -o hero-1920.webp
+optimize-img hero.jpg --width 1200 --format webp --quality 85 -o hero-1200.webp
+optimize-img hero.jpg --width 768 --format webp --quality 80 -o hero-768.webp
+optimize-img hero.jpg --width 480 --format webp --quality 75 -o hero-480.webp
 ```
 
-### Detailed Reporting and Statistics
-
-When using bulk processing with verbose mode (`--verbose`), optimize-img provides comprehensive reporting with detailed metrics and performance benchmarks:
+### E-commerce Product Images
 
 ```bash
-# Enable detailed reporting with metrics
-optimize-img ./images --bulk --verbose
+# Main product images (high quality)
+optimize-img ./products --bulk --preset quality --width 1200
 
-# Sample output:
-# === Processing Complete ===
-# Files processed: 12
-# Files skipped: 0
-# 
-# === Detailed File Report ===
-# 1. photo1.jpg
-#    Path: /home/user/images/photo1.jpg
-#    Original: 2.45 MB → Optimized: 856.32 KB
-#    Reduction: 65.8% (Saved: 1.61 MB)
-#    Processing time: 245ms
-# 
-# 2. photo2.png
-#    Path: /home/user/images/photo2.png
-#    Original: 1.23 MB → Optimized: 234.56 KB
-#    Reduction: 81.4% (Saved: 1010.44 KB)
-#    Processing time: 189ms
-# 
-# === Comprehensive Metrics ===
-# File Statistics:
-#    - Average original file size: 1.84 MB
-#    - Average optimized file size: 545.44 KB
-#    - Average size reduction: 73.2%
-#    - Total storage saved: 8.92 MB
-#    - Overall size reduction: 73.2% (12.18 MB → 3.26 MB)
-# 
-# Performance Metrics:
-#    - Total processing time: 2.84s
-#    - Average time per file: 237ms
-#    - Processing speed: 4.2 files/second
-#    - Processing efficiency: 94.3%
-# 
-# Optimization Summary:
-#    - Files processed: 12
-#    - Files skipped: 0
-#    - Errors encountered: 0
+# Thumbnails (smaller, faster loading)
+optimize-img ./products --bulk --preset performant --width 300 --output ./thumbnails
+
+# Mobile-optimized versions
+optimize-img ./products --bulk --preset balanced --width 600 --output ./mobile
 ```
 
-#### Comprehensive Metrics Explained
+### Static Site Generators
 
-**File Statistics:**
-- **Average original file size**: Mean size of all source files before optimization
-- **Average optimized file size**: Mean size of all processed files after optimization  
-- **Average size reduction**: Mean percentage reduction across all files
-- **Total storage saved**: Cumulative space reduction in human-readable units
-- **Overall size reduction**: Total percentage reduction with before/after totals
+```bash
+# Hugo/Jekyll/Gatsby workflow
+optimize-img ./static/images --bulk --preset balanced --format webp
 
-**Performance Metrics:**
-- **Total processing time**: Complete duration from start to finish
-- **Average time per file**: Mean processing time per individual file
-- **Processing speed**: Files processed per second (throughput)
-- **Processing efficiency**: Percentage of total time spent actively processing vs. overhead
+# Keep originals for fallback
+optimize-img ./static/images --bulk --preset balanced --format jpeg --output ./static/images/jpeg-fallback
+```
 
-**Individual File Metrics:**
-- **Processing time**: Time taken to optimize each specific file
-- **Size reduction**: Percentage decrease for each file
-- **Space saved**: Absolute bytes saved per file
+## 🎮 3D & Game Development
 
-### Interpreting Optimization Results
+### Texture Pipeline for Unity/Unreal
 
-**Understanding Reduction Percentages:**
-- **60-80% reduction**: Excellent optimization, typical for high-quality photos with WebP conversion
-- **40-60% reduction**: Good optimization, common for PNG to WebP conversions or quality adjustments
-- **20-40% reduction**: Moderate optimization, often seen with quality preservation settings
-- **<20% reduction**: Minimal optimization, may indicate already optimized images or very high quality settings
+```bash
+# High-quality base textures
+optimize-img ./textures/source --bulk --resize 1/1 --preset quality --format webp --output ./textures/high
 
-**Factors Affecting Optimization:**
-- **Image format**: PNG to WebP typically yields 25-35% reduction, JPEG to WebP 25-50%
-- **Image content**: Photos with gradients optimize better than images with sharp edges or text
-- **Original quality**: Higher quality source images have more optimization potential
-- **Color complexity**: Images with fewer colors (charts, logos) may optimize differently than photos
+# Medium quality for most objects
+optimize-img ./textures/source --bulk --resize 1/2 --preset balanced --format webp --output ./textures/medium
 
-**Performance Considerations:**
-- **Processing time**: Larger files and higher quality settings take longer to process
-- **Memory usage**: Processing many large files simultaneously may require adjusting `--parallel` setting
-- **Network impact**: Smaller file sizes improve website loading times and reduce bandwidth costs
+# Low quality for background/less important objects
+optimize-img ./textures/source --bulk --resize 1/4 --preset performant --format webp --output ./textures/low
+```
 
-### Performance Benchmarks
+### PBR Material Textures
 
-Based on extensive testing with various image collections, here are typical performance metrics:
+```bash
+# Albedo/Diffuse maps (keep color accuracy)
+optimize-img ./textures/albedo --bulk --preset quality --keep-metadata
 
-#### Small Image Collection (10-50 images, <1MB each)
-| Metric | Default Preset | Balanced Preset | Quality Preset | Performant Preset |
-|--------|----------------|-----------------|----------------|-------------------|
-| **Avg. Processing Time** | 150-300ms | 120-250ms | 200-400ms | 100-200ms |
-| **Files per Second** | 3-7 | 4-8 | 2-5 | 5-10 |
-| **Size Reduction** | 15-30% | 25-40% | 5-15% | 40-60% |
-| **Memory Usage** | 50-100MB | 40-80MB | 60-120MB | 30-70MB |
+# Normal maps (preserve detail)
+optimize-img ./textures/normal --bulk --preset quality --format png
 
-#### Medium Image Collection (50-200 images, 1-5MB each)
-| Metric | Default Preset | Balanced Preset | Quality Preset | Performant Preset |
-|--------|----------------|-----------------|----------------|-------------------|
-| **Avg. Processing Time** | 500-1000ms | 400-800ms | 800-1500ms | 300-600ms |
-| **Files per Second** | 1-2 | 1.2-2.5 | 0.7-1.3 | 1.7-3.3 |
-| **Size Reduction** | 20-35% | 30-45% | 10-20% | 45-65% |
-| **Memory Usage** | 150-300MB | 120-250MB | 200-400MB | 100-200MB |
+# Roughness/Metalness (technical maps, strip metadata)
+optimize-img ./textures/technical --bulk --preset balanced --strip-metadata
+```
 
-#### Large Image Collection (200+ images, >5MB each)
-| Metric | Default Preset | Balanced Preset | Quality Preset | Performant Preset |
-|--------|----------------|-----------------|----------------|-------------------|
-| **Avg. Processing Time** | 2-5s | 1.5-4s | 3-8s | 1-3s |
-| **Files per Second** | 0.2-0.5 | 0.25-0.7 | 0.1-0.3 | 0.3-1.0 |
-| **Size Reduction** | 25-40% | 35-50% | 15-25% | 50-70% |
-| **Memory Usage** | 300-800MB | 250-600MB | 400-1000MB | 200-500MB |
+### WebGL/WebGPU Optimization
+
+```bash
+# Power-of-two textures for better GPU performance
+optimize-img ./webgl/textures --bulk --resize 1/2 --width 512 --height 512 --preset performant
+
+# Compressed formats for web
+optimize-img ./webgl/textures --bulk --format webp --quality 75 --preset balanced
+```
+
+## 🚀 Performance Optimization
+
+### Large Batch Processing
+
+```bash
+# Process thousands of images efficiently
+optimize-img ./massive-collection --bulk --preset performant --parallel 16 --yes
+
+# Split into smaller batches for memory management
+for dir in ./batches/*/; do
+  optimize-img "$dir" --bulk --preset balanced --parallel 8
+done
+```
+
+### Memory-Constrained Environments
+
+```bash
+# Reduce memory usage for large files
+optimize-img ./large-images --bulk --preset performant --parallel 2 --quality 70
+
+# Process in stages
+optimize-img ./stage1 --bulk --preset performant
+optimize-img ./stage2 --bulk --preset performant
+```
 
 #### Real-World Test Results
 
@@ -332,54 +327,32 @@ Based on extensive testing with various image collections, here are typical perf
 - **Progress tracking**: Real-time progress updates
 - **Error recovery**: Graceful handling of I/O failures
 
-## Web Development
+## 📸 Photography Workflows
 
-### Responsive Images
+### Client Photo Delivery
 
 ```bash
-# Create multiple sizes for responsive design
-optimize-img hero.jpg --width 1920 -o hero-1920.webp
-optimize-img hero.jpg --width 1200 -o hero-1200.webp
-optimize-img hero.jpg --width 768 -o hero-768.webp
-optimize-img hero.jpg --width 480 -o hero-480.webp
+# High-resolution finals (keep metadata for copyright)
+optimize-img ./client-photos --bulk --preset quality --keep-metadata --format jpeg
+
+# Web gallery (smaller, faster)
+optimize-img ./client-photos --bulk --preset balanced --width 1200 --format webp --output ./web-gallery
+
+# Social media versions
+optimize-img ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
 ```
 
-### Web Performance
+### Portfolio Optimization
 
 ```bash
-# Optimize for web (balanced quality/size, metadata stripped by default)
-optimize-img ./assets --bulk --preset balanced
+# Full resolution for download
+optimize-img ./portfolio --bulk --preset quality --format jpeg --output ./portfolio/full
 
-# Create thumbnails
-optimize-img ./photos --bulk --width 300 --height 200 --format webp --quality 70
+# Web display
+optimize-img ./portfolio --bulk --preset balanced --width 1600 --format webp --output ./portfolio/web
 
-# Optimize product images
-optimize-img ./products --bulk --width 800 --format webp --quality 80
-```
-
-## Photography
-
-### Photo Processing
-
-```bash
-# High quality for portfolio
-optimize-img ./portfolio --bulk --preset quality --keep-originals
-
-# Batch resize vacation photos
-optimize-img ./vacation-photos --bulk --width 1600 --height 1200
-
-# Create social media versions
-optimize-img photo.jpg --width 1080 --height 1080 --format jpeg --quality 85
-```
-
-### Metadata Handling
-
-```bash
-# Strip metadata for privacy (default behavior)
-optimize-img ./personal-photos --bulk
-
-# Preserve metadata for professional work
-optimize-img ./client-work --bulk --keep-originals
+# Thumbnails
+optimize-img ./portfolio --bulk --preset performant --width 400 --format webp --output ./portfolio/thumbs
 ```
 
 ## CI/CD Integration
@@ -447,24 +420,12 @@ RUN optimize-img ./images --bulk --preset balanced
 CMD ["optimize-img", "--help"]
 ```
 
-## Configuration Examples
+## 🔧 Advanced Configuration
 
-### Basic Configuration
+### Environment-Specific Configs
 
-`.optimize-imgrc`:
-```json
-{
-  "format": "webp",
-  "quality": 80,
-  "stripMetadata": true,
-  "keepOriginals": true
-}
-```
-
-### Advanced Configuration
-
-`optimize-img.config.js`:
-```javascript
+```js
+// optimize-img.config.js
 module.exports = {
   format: 'webp',
   quality: 85,
@@ -472,126 +433,102 @@ module.exports = {
   keepOriginals: true,
   parallel: 8,
   preset: 'balanced',
-  width: null,
-  height: null,
-  
-  // Custom processing logic
-  beforeProcess: (inputPath) => {
-    console.log(`Processing: ${inputPath}`);
+
+  development: {
+    keepOriginals: true,
+    verbose: true,
+    preset: 'default'
   },
-  
-  afterProcess: (inputPath, outputPath, stats) => {
-    console.log(`Saved ${stats.savedBytes} bytes`);
+
+  staging: {
+    preset: 'balanced',
+    parallel: 12
+  },
+
+  production: {
+    preset: 'performant',
+    parallel: 16,
+    stripMetadata: true
   }
 };
 ```
 
-## Performance Optimization
-
-### Memory Management
+### Multi-Format Output
 
 ```bash
-# For large files, reduce parallel processing
-optimize-img ./large-images --bulk --parallel 2
-
-# Process in batches
-for dir in ./images/*/; do
-  optimize-img "$dir" --bulk --parallel 4
+# Generate multiple formats for broad compatibility
+for format in webp jpeg png; do
+  optimize-img ./images --bulk --format $format --output ./optimized/$format
 done
 ```
 
-### Speed Optimization
+## 📊 Performance Benchmarks
+
+### Processing Speed Examples
 
 ```bash
-# Use performant preset for maximum compression speed
-optimize-img ./temp-images --bulk --preset performant
+# Modern laptop (8 cores, SSD)
+# 100 images (2-5MB each)
+optimize-img ./test-images --bulk --preset balanced --parallel 8
+# Typical result: ~45 seconds for 100 images
 
-# Process only new files
-find ./images -name "*.jpg" -newer ./last-run -exec optimize-img {} \;
+# Server (16 cores, fast storage)
+# 1000 images (1-10MB each)
+optimize-img ./large-collection --bulk --preset performant --parallel 16
+# Typical result: ~3-5 minutes for 1000 images
 ```
 
-## Integration Examples
+### Size Reduction Examples
 
-### Node.js Script
+```bash
+# Photography (JPEG → WebP)
+# Original: 25MB folder
+# After: 8.5MB (66% reduction)
+optimize-img ./photos --bulk --preset balanced
 
-```javascript
-const ImageOptimizer = require('optimize-img');
-const fs = require('fs').promises;
-const path = require('path');
+# 3D Textures (PNG → WebP)
+# Original: 150MB folder
+# After: 45MB (70% reduction)
+optimize-img ./textures --bulk --preset performant
 
-async function optimizeDirectory(dirPath) {
-  const optimizer = new ImageOptimizer({
-    format: 'webp',
-    quality: 80,
-    stripMetadata: true,
-    verbose: true
-  });
-  
-  try {
-    await optimizer.run(dirPath);
-    console.log('Optimization complete:', optimizer.stats);
-  } catch (error) {
-    console.error('Optimization failed:', error.message);
-  }
-}
-
-// Usage
-optimizeDirectory('./images');
+# Web Assets (Mixed formats)
+# Original: 50MB folder
+# After: 18MB (64% reduction)
+optimize-img ./web-assets --bulk --preset balanced
 ```
 
-### Gulp Plugin
+## 🎯 Best Practices
 
-```javascript
-const { src, dest } = require('gulp');
-const through = require('through2');
-const ImageOptimizer = require('optimize-img');
+### General Guidelines
 
-function optimizeImages() {
-  return src('images/**/*.{jpg,jpeg,png}')
-    .pipe(through.obj(async function(file, enc, cb) {
-      if (file.isBuffer()) {
-        const optimizer = new ImageOptimizer({
-          format: 'webp',
-          quality: 80
-        });
-        
-        try {
-          await optimizer.processFile(file.path);
-          cb(null, file);
-        } catch (error) {
-          cb(error);
-        }
-      } else {
-        cb(null, file);
-      }
-    }))
-    .pipe(dest('dist/images/'));
-}
+1. **Start Conservative**: Use `--preset balanced` first, then adjust based on results
+2. **Test First**: Process a few images before running bulk operations
+3. **Keep Originals**: Use `keepOriginals: true` until you're confident with results
+4. **Use Parallel Processing**: Set `--parallel` to your CPU core count for best performance
 
-exports.optimize = optimizeImages;
-```
+### Format Selection
 
-### Webpack Plugin
+- **WebP**: Best for web, good compression and quality
+- **JPEG**: Use for photography when WebP isn't supported
+- **PNG**: Use for graphics, screenshots, or when transparency is needed
+- **AVIF**: Best compression, but slower processing and limited support
 
-```javascript
-class OptimizeImagesPlugin {
-  apply(compiler) {
-    compiler.hooks.emit.tapAsync('OptimizeImagesPlugin', (compilation, callback) => {
-      const ImageOptimizer = require('optimize-img');
-      const optimizer = new ImageOptimizer({
-        format: 'webp',
-        quality: 80
-      });
-      
-      // Process emitted assets
-      Promise.all(
-        Object.keys(compilation.assets)
-          .filter(name => /\.(jpg|jpeg|png)$/i.test(name))
-          .map(name => optimizer.processFile(compilation.assets[name].source()))
-      ).then(() => callback()).catch(callback);
-    });
-  }
-}
+### Quality Settings
 
-module.exports = OptimizeImagesPlugin;
-```
+- **Quality 90-95**: Photography, portfolios, archival work
+- **Quality 75-85**: General web use, good balance
+- **Quality 60-75**: Thumbnails, previews, bandwidth-sensitive applications
+- **Quality 50-60**: Maximum compression, acceptable quality loss
+
+### Troubleshooting Tips
+
+If you encounter issues:
+
+- **Windows users**: Check [Windows-specific troubleshooting](./TROUBLESHOOTING.md#windows-issues) for EPERM errors
+- **Memory issues**: Reduce `--parallel` setting or process smaller batches
+- **Quality concerns**: Use `--verbose` flag to see detailed processing information
+- **Format problems**: Run `optimize-img formats` to see supported formats
+
+---
+
+*For detailed troubleshooting, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)*

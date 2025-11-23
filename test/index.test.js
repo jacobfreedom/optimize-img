@@ -22,6 +22,7 @@ describe('ImageOptimizer', () => {
 
     // Create a test image with Windows-compatible approach
     try {
+      // Use buffer-based approach to avoid file locks on Windows
       const buffer = await sharp({
         create: {
           width: 100,
@@ -32,6 +33,11 @@ describe('ImageOptimizer', () => {
       }).jpeg().toBuffer()
 
       await fs.writeFile(testImagePath, buffer)
+      
+      // Add small delay for Windows file system to release any potential locks
+      if (process.platform === 'win32') {
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
     } catch (error) {
       // Fallback for Windows file system issues
       console.warn('Sharp file creation failed, using alternative method:', error.message)
@@ -49,6 +55,11 @@ describe('ImageOptimizer', () => {
         0xFF, 0xD9
       ])
       await fs.writeFile(testImagePath, minimalJpegBuffer)
+      
+      // Add small delay for Windows file system to release any potential locks
+      if (process.platform === 'win32') {
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
     }
 
     optimizer = new ImageOptimizer({
@@ -66,13 +77,20 @@ describe('ImageOptimizer', () => {
       await fs.remove(testDir)
     } catch (error) {
       if (error.code === 'EPERM' || error.code === 'EBUSY') {
-        // Try with delay for Windows file locks
-        await new Promise(resolve => setTimeout(resolve, 200))
-        try {
-          await fs.remove(testDir)
-        } catch (retryError) {
-          console.warn(`Warning: Could not clean up test directory ${testDir}: ${retryError.message}`)
+        // Multiple retry attempts with increasing delays for Windows file locks
+        let lastError = error
+        for (let attempt = 1; attempt <= 5; attempt++) {
+          const delay = attempt * 200 // Increasing delay: 200ms, 400ms, 600ms, 800ms, 1000ms
+          await new Promise(resolve => setTimeout(resolve, delay))
+          try {
+            await fs.remove(testDir)
+            return // Success, exit cleanup
+          } catch (retryError) {
+            lastError = retryError
+            // Continue to next attempt
+          }
         }
+        console.warn(`Warning: Could not clean up test directory ${testDir} after 5 attempts: ${lastError.message}`)
       } else {
         console.warn(`Warning: Could not clean up test directory ${testDir}: ${error.message}`)
       }

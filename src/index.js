@@ -131,6 +131,7 @@ class ImageOptimizer {
     this.log(`Processing file: ${inputPath}`, 'info')
 
     const { format, quality, stripMetadata, deleteOriginals, width, height, resize, percent, output } = this.options
+    let sharpInstance = null
 
     try {
       // Validate inputs
@@ -165,8 +166,8 @@ class ImageOptimizer {
       // Ensure output directory exists
       await fs.ensureDir(path.dirname(outputPath))
 
-      // Process image
-      let sharpInstance = sharp(inputPath)
+      // Process image with Windows file lock prevention
+      sharpInstance = sharp(inputPath)
 
       // Apply resize if specified
       if (width || height) {
@@ -236,11 +237,9 @@ class ImageOptimizer {
         sharpInstance = sharpInstance.withMetadata()
       }
 
-      // Write output
-      await sharpInstance.toFormat(validatedFormat, formatOptions).toFile(outputPath)
-
-      // Clean up Sharp instance to prevent file locks on Windows
-      sharpInstance = null
+      // Write output using buffer approach for Windows compatibility
+      const outputBuffer = await sharpInstance.toFormat(validatedFormat, formatOptions).toBuffer()
+      await fs.writeFile(outputPath, outputBuffer)
 
       // Get new file size
       const newSize = (await fs.stat(outputPath)).size
@@ -284,6 +283,21 @@ class ImageOptimizer {
       this.stats.errors++
       this.log(`Error processing ${inputPath}: ${error.message}`, 'error')
       throw error
+    } finally {
+      // Ensure Sharp instance is cleaned up to prevent file locks on Windows
+      if (sharpInstance) {
+        try {
+          // Force cleanup of Sharp instance
+          sharpInstance.destroy?.()
+          sharpInstance = null
+          // Add delay for Windows file system to release locks
+          if (process.platform === 'win32') {
+            await new Promise(resolve => setTimeout(resolve, 50))
+          }
+        } catch (cleanupError) {
+          this.log(`Warning: Error cleaning up Sharp instance: ${cleanupError.message}`, 'warning')
+        }
+      }
     }
   }
 

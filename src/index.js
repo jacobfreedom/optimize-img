@@ -264,31 +264,10 @@ class ImageOptimizer {
       fileDetail.reduction = ((originalSize - newSize) / originalSize * 100)
       fileDetail.processingTime = Date.now() - fileDetail.startTime
 
-      // Delete original if requested
+      // For deleteOriginals mode, we've already written the optimized file to the original path
+      // No deletion needed since we wrote directly to the original location
       if (deleteOriginals && inputPath !== outputPath) {
-        try {
-          if (process.platform === 'win32') {
-            await WindowsFileUtils.safeRemove(inputPath)
-          } else {
-            await fs.remove(inputPath)
-          }
-          this.log(`Deleted original file: ${inputPath}`, 'info')
-        } catch (deleteError) {
-          // Handle Windows file system permission issues
-          if (deleteError.code === 'EPERM' || deleteError.code === 'EBUSY') {
-            this.log(`Warning: Could not delete original file ${inputPath} due to file system constraints. File may be locked or in use.`, 'warning')
-            // Try again with enhanced Windows utilities
-            try {
-              await WindowsFileUtils.forceCleanup(inputPath)
-              await WindowsFileUtils.safeRemove(inputPath)
-              this.log(`Successfully deleted original file: ${inputPath}`, 'info')
-            } catch (retryError) {
-              this.log(`Warning: Still could not delete original file ${inputPath} after retry. Error: ${retryError.message}`, 'warning')
-            }
-          } else {
-            throw deleteError
-          }
-        }
+        this.log(`Optimized file written to original location: ${inputPath}`, 'info')
       }
 
       this.stats.processed++

@@ -21,7 +21,7 @@ optimize-img ./images --bulk --preset balanced
 
 ## 🌟 Why optimize-img?
 
-Originally built for **3D texture optimization**, optimize_img has grown into a general-purpose image pipeline that balances:
+Originally built for **3D texture optimization**, optimize-img has grown into a general-purpose image pipeline that balances:
 
 - **Quality** – sensible defaults that don't wreck your images  
 - **Performance** – built on [Sharp](https://sharp.pixelplumbing.com/), highly parallel  
@@ -285,7 +285,7 @@ It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-p
 
 **This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
 
-**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then convert these two to KTX2 pass. You can even start with 4K source and keep downscaling quality testing.
+**Additional quality tip:** Keep your normal maps at full 2K quality (optionally WebP for load-time), and use this tool to downscale baseColor + ORM to 1K PNGs. Then convert these two with KTX2 pass. You can even start with 4K source and keep downscale quality testing.
 
 ---
 

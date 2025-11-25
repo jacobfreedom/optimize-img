@@ -6,7 +6,7 @@ const cliProgress = require('cli-progress')
 const glob = require('glob')
 const pLimit = require('p-limit')
 const { validateQuality, validateFormat } = require('./config')
-const WindowsFileUtils = require('./utils/windowsFileUtils')
+// Windows file utilities disabled - using standard fs operations only
 
 class ImageOptimizer {
   constructor(options = {}) {
@@ -247,12 +247,8 @@ class ImageOptimizer {
       // Write output using buffer approach for Windows compatibility
       const outputBuffer = await sharpInstance.toFormat(validatedFormat, formatOptions).toBuffer()
 
-      // Use Windows-safe file writing
-      if (process.platform === 'win32') {
-        await WindowsFileUtils.safeWrite(outputPath, outputBuffer)
-      } else {
-        await fs.writeFile(outputPath, outputBuffer)
-      }
+      // Write output file using standard fs operations
+      await fs.writeFile(outputPath, outputBuffer)
 
       // Get new file size
       const newSize = (await fs.stat(outputPath)).size
@@ -264,29 +260,17 @@ class ImageOptimizer {
       fileDetail.reduction = ((originalSize - newSize) / originalSize * 100)
       fileDetail.processingTime = Date.now() - fileDetail.startTime
 
-      // Delete original if requested
+      // Delete original if requested (with Windows limitations)
       if (deleteOriginals && inputPath !== outputPath) {
         try {
-          if (process.platform === 'win32') {
-            await WindowsFileUtils.safeRemove(inputPath)
-          } else {
-            await fs.remove(inputPath)
-          }
+          await fs.remove(inputPath)
           this.log(`Deleted original file: ${inputPath}`, 'info')
         } catch (deleteError) {
-          // Handle Windows file system permission issues
-          if (deleteError.code === 'EPERM' || deleteError.code === 'EBUSY') {
-            this.log(`Warning: Could not delete original file ${inputPath} due to file system constraints. File may be locked or in use.`, 'warning')
-            // Try again with enhanced Windows utilities
-            try {
-              await WindowsFileUtils.forceCleanup(inputPath)
-              await WindowsFileUtils.safeRemove(inputPath)
-              this.log(`Successfully deleted original file: ${inputPath}`, 'info')
-            } catch (retryError) {
-              this.log(`Warning: Still could not delete original file ${inputPath} after retry. Error: ${retryError.message}`, 'warning')
-            }
+          // Warn about Windows file system limitations
+          if (process.platform === 'win32') {
+            this.log(`Warning: Could not delete original file on Windows due to file system constraints. File may be locked or in use.`, 'warning')
           } else {
-            throw deleteError
+            this.log(`Warning: Could not delete original file ${inputPath}: ${deleteError.message}`, 'warning')
           }
         }
       }
@@ -320,10 +304,11 @@ class ImageOptimizer {
             // Wait for file system to stabilize
             await new Promise(resolve => setTimeout(resolve, 100))
 
-            // Force cleanup of any lingering file handles
+            // Cleanup any lingering file handles
             try {
               if (inputPath && await fs.pathExists(inputPath)) {
-                await WindowsFileUtils.forceCleanup(inputPath)
+                // Basic cleanup - Windows-specific force cleanup disabled
+                await new Promise(resolve => setTimeout(resolve, 100))
               }
             } catch (cleanupError) {
               // Ignore cleanup errors for input path

@@ -59,19 +59,9 @@ describe('CLI Integration', () => {
   })
 
   afterEach(async () => {
-    // Enhanced cleanup for Windows file system compatibility
+    // Standard cleanup using fs-extra
     try {
-      if (process.platform === 'win32') {
-        // Use Windows-safe removal with enhanced retry logic
-        const WindowsFileUtils = require('../src/utils/windowsFileUtils')
-        await WindowsFileUtils.safeRemove(testDir, {
-          maxRetries: 15, // More retries for Windows
-          initialDelay: 200,
-          maxDelay: 3000
-        })
-      } else {
-        await fs.remove(testDir)
-      }
+      await fs.remove(testDir)
     } catch (error) {
       if (error.code === 'EPERM' || error.code === 'EBUSY') {
         // Multiple retry attempts with increasing delays for Windows file locks

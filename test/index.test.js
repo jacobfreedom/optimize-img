@@ -73,14 +73,9 @@ describe('ImageOptimizer', () => {
   })
 
   afterEach(async () => {
-    // Simplified cleanup - use WindowsFileUtils for all platforms with optimized settings
+    // Standard cleanup using fs-extra
     try {
-      const WindowsFileUtils = require('../src/utils/windowsFileUtils')
-      await WindowsFileUtils.safeRemove(testDir, {
-        maxRetries: 3, // Reduced from 20 to prevent timeouts
-        initialDelay: 50, // Reduced from 200ms
-        maxDelay: 500 // Reduced from 5000ms
-      })
+      await fs.remove(testDir)
     } catch (error) {
       // Only log warnings for EBUSY/EPERM errors, don't fail the test
       if (error.code === 'EPERM' || error.code === 'EBUSY') {

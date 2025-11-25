@@ -268,7 +268,7 @@ class ImageOptimizer {
         } catch (deleteError) {
           // Warn about Windows file system limitations
           if (process.platform === 'win32') {
-            this.log(`Warning: Could not delete original file on Windows due to file system constraints. File may be locked or in use.`, 'warning')
+            this.log('Warning: Could not delete original file on Windows due to file system constraints. File may be locked or in use.', 'warning')
           } else {
             this.log(`Warning: Could not delete original file ${inputPath}: ${deleteError.message}`, 'warning')
           }

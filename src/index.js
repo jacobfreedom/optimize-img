@@ -13,7 +13,7 @@ class ImageOptimizer {
     this.options = {
       format: 'webp',
       quality: 80,
-      stripMetadata: true,
+      stripMetadata: false, // metadata preserved by default
       keepOriginals: true,
       parallel: 4,
       verbose: false,

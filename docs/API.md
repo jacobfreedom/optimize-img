@@ -26,7 +26,7 @@ const optimizer = new ImageOptimizer(options);
 |--------|------|---------|-------------|
 | `format` | string | 'webp' | Output format (webp, jpeg, png, avif) |
 | `quality` | number | 80 | Quality setting (0-100) |
-| `stripMetadata` | boolean | true | Strip image metadata |
+| `stripMetadata` | boolean | false | Strip image metadata (preserved by default) |
 | `keepOriginals` | boolean | false | Keep original files after processing |
 | `width` | number \| null | null | Resize width (maintains aspect ratio) |
 | `height` | number \| null | null | Resize height (maintains aspect ratio) |
@@ -126,7 +126,7 @@ console.log(optimizer.options);
 // {
 //   format: 'webp',
 //   quality: 80,
-//   stripMetadata: true,
+//   stripMetadata: false, // metadata preserved by default
 //   ...
 // }
 ```
@@ -153,7 +153,7 @@ const config = await loadConfig('./my-config.json');
 {
   "format": "webp",
   "quality": 85,
-  "stripMetadata": true,
+  "stripMetadata": false, // metadata preserved by default
   "keepOriginals": false,
   "parallel": 8,
   "preset": "balanced"
@@ -166,7 +166,7 @@ const config = await loadConfig('./my-config.json');
 module.exports = {
   format: 'webp',
   quality: 85,
-  stripMetadata: true,
+  stripMetadata: false, // metadata preserved by default
   keepOriginals: false,
   parallel: 8,
   preset: 'balanced',
@@ -207,7 +207,7 @@ const { PRESETS } = require('optimize-img/src/config');
 PRESETS.custom = {
   format: 'avif',
   quality: 70,
-  stripMetadata: true,
+  stripMetadata: false, // metadata preserved by default
   keepOriginals: false
 };
 ```
@@ -321,9 +321,47 @@ import { ImageOptimizerOptions, ProcessingStats } from 'optimize-img';
 const options: ImageOptimizerOptions = {
   format: 'webp',
   quality: 85,
-  stripMetadata: true
+  stripMetadata: false // metadata preserved by default
 };
 
 const optimizer = new ImageOptimizer(options);
 const stats: ProcessingStats = optimizer.stats;
+
+## ⚠️ Platform-Specific Considerations
+
+### Windows File System Limitations
+
+When using the optimize-img API on **Windows systems**, be aware of the following limitations:
+
+```javascript
+// Windows-specific configuration
+const windowsOptimizer = new ImageOptimizer({
+  // File deletion is not supported on Windows
+  keepOriginals: true, // Required for Windows compatibility
+  
+  // Metadata is preserved by default
+  stripMetadata: false,
+  
+  // Reduce parallel processing on Windows to minimize file contention
+  parallel: process.platform === 'win32' ? 2 : 8,
+  
+  // Enable verbose logging for debugging Windows-specific issues
+  verbose: true
+});
+```
+
+**Key Windows Limitations:**
+- **File deletion operations (`keepOriginals: false`) are NOT SUPPORTED** on Windows
+- Files remain locked by the operating system and cannot be reliably deleted
+- This is a fundamental Windows file system limitation, not a tool limitation
+
+**Recommended Windows Configuration:**
+```javascript
+{
+  keepOriginals: true,    // Required - file deletion not supported
+  stripMetadata: false,   // Default - metadata preserved
+  parallel: 2,           // Reduced parallel processing
+  verbose: true          // Enhanced logging for debugging
+}
+```
 ```

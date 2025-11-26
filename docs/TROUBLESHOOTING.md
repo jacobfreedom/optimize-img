@@ -369,13 +369,15 @@ Error about unsupported format
 
 ### Windows Issues
 
-**Problem**: File permission errors, Sharp crashes, EPERM errors during testing
+**Problem**: File permission errors, Sharp crashes, EPERM/EBUSY errors during file operations
+
+**Important Note**: The `--delete-originals` flag is **NOT SUPPORTED** on Windows systems due to fundamental Windows file system architecture limitations. Files remain locked by the system and cannot be reliably deleted.
 
 **Solutions**:
 
 ```bash
-# Run as Administrator
-# Or use Windows Subsystem for Linux (WSL)
+# Run as Administrator for file access permissions
+# Or use Windows Subsystem for Linux (WSL) for better file system compatibility
 
 # Check antivirus software - may block file operations
 # Add optimize-img to antivirus exclusions
@@ -411,20 +413,20 @@ If you encounter "EPERM: operation not permitted, unlink" errors during testing:
 
 If you encounter "EBUSY: resource busy or locked" errors during bulk directory processing:
 
-1. **Enhanced File Handling**: The application now includes Windows-specific file utilities that automatically retry operations with exponential backoff
-   - Files are processed with buffer-based reading to avoid locks
-   - Cleanup operations use enhanced retry logic (up to 20 attempts)
-   - Parallel processing is automatically throttled on Windows
+1. **File System Limitations**: Windows file locking is fundamental to the OS architecture
+   - Files remain locked by system processes, antivirus, and other applications
+   - Automatic deletion operations cannot be guaranteed to work reliably
+   - This is a platform limitation, not a tool limitation
 
-2. **Regression Testing**: A comprehensive regression test has been added to verify bulk processing stability
-   - Tests processing of 10+ files with parallel operations
-   - Validates cleanup and error handling under load
-   - Ensures no file locks persist after processing
+2. **Recommended Workflow**:
+   - Process images without deletion (`optimize-img ./images --bulk`)
+   - Manually clean up original files when they are not in use
+   - Use the tool primarily for optimization without automated deletion
 
-3. **Timeout Handling**: Extended timeouts for Windows operations
-   - Test cleanup operations have extended retry limits
-   - File system operations allow for Windows-specific delays
-   - Bulk processing includes additional stabilization delays
+3. **Alternative Approaches**:
+   - Use Windows Subsystem for Linux (WSL) for better file system compatibility
+   - Schedule cleanup operations during low-activity periods
+   - Use dedicated file management tools for bulk deletion
 
 **Windows-Specific Configuration**:
 
@@ -439,7 +441,7 @@ For optimal Windows performance, consider these settings:
 }
 ```
 
-This configuration reduces parallel processing (which can cause file locks), preserves originals (reducing write operations), and enables verbose logging for debugging.
+This configuration reduces parallel processing (which can minimize file contention), preserves originals (avoiding deletion operations), and enables verbose logging for debugging.
 
 ### macOS Issues
 

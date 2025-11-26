@@ -111,13 +111,13 @@ optimize-img ./textures/source --bulk --resize 1/4 --preset performant --format 
 ### PBR Material Textures
 
 ```bash
-# Albedo/Diffuse maps (keep color accuracy)
-optimize-img ./textures/albedo --bulk --preset quality --keep-metadata
+# Albedo/Diffuse maps (keep color accuracy - metadata preserved by default)
+optimize-img ./textures/albedo --bulk --preset quality
 
-# Normal maps (preserve detail)
+# Normal maps (preserve detail - metadata preserved by default)
 optimize-img ./textures/normal --bulk --preset quality --format png
 
-# Roughness/Metalness (technical maps, strip metadata)
+# Roughness/Metalness (technical maps, strip metadata for size)
 optimize-img ./textures/technical --bulk --preset balanced --strip-metadata
 ```
 
@@ -332,11 +332,11 @@ optimize-img ./stage2 --bulk --preset performant
 ### Client Photo Delivery
 
 ```bash
-# High-resolution finals (keep metadata for copyright)
-optimize-img ./client-photos --bulk --preset quality --keep-metadata --format jpeg
+# High-resolution finals (metadata preserved by default for copyright)
+optimize-img ./client-photos --bulk --preset quality --format jpeg
 
-# Web gallery (smaller, faster)
-optimize-img ./client-photos --bulk --preset balanced --width 1200 --format webp --output ./web-gallery
+# Web gallery (smaller, faster - strip metadata for privacy/size)
+optimize-img ./client-photos --bulk --preset balanced --width 1200 --format webp --strip-metadata --output ./web-gallery
 
 # Social media versions
 optimize-img ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
@@ -429,7 +429,7 @@ CMD ["optimize-img", "--help"]
 module.exports = {
   format: 'webp',
   quality: 85,
-  stripMetadata: true,
+  stripMetadata: false, // metadata preserved by default
   keepOriginals: true,
   parallel: 8,
   preset: 'balanced',
@@ -448,7 +448,7 @@ module.exports = {
   production: {
     preset: 'performant',
     parallel: 16,
-    stripMetadata: true
+    stripMetadata: false // metadata preserved by default
   }
 };
 ```
@@ -524,7 +524,7 @@ optimize-img ./web-assets --bulk --preset balanced
 
 If you encounter issues:
 
-- **Windows users**: Check [Windows-specific troubleshooting](./TROUBLESHOOTING.md#windows-issues) for EPERM errors
+- **Windows users**: Check [Windows-specific troubleshooting](./TROUBLESHOOTING.md#windows-issues) for file system limitations and EPERM errors
 - **Memory issues**: Reduce `--parallel` setting or process smaller batches
 - **Quality concerns**: Use `--verbose` flag to see detailed processing information
 - **Format problems**: Run `optimize-img formats` to see supported formats

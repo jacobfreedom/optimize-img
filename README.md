@@ -42,7 +42,7 @@ Use it for:
 - 📁 **Bulk Mode** – `--bulk` recursively processes folders
 - 🎛️ **Presets** – `default`, `balanced`, `quality`, `performant`
 - 📏 **Resizing** – width/height, ratios (`1/2`, `1/4`), or percent
-- 🧾 **Metadata** – **strips EXIF/ICC by default** for privacy/size, `--keep-metadata` if you need it
+- 🧾 **Metadata** – **preserves EXIF/ICC metadata by default** for archival/color accuracy, `--strip-metadata` if you need privacy/size reduction
 - 📊 **Stats** – progress bar + before/after size reduction
 - 🧪 **3D-Friendly** – ideal for quickly downscaling/testing texture sets
 
@@ -198,6 +198,55 @@ optimize-img texture_4k.jpg --resize 1/4
 optimize-img texture.jpg --resize 2/3
 ```
 
+---
+
+## ⚙️ CLI Options
+
+### Basic Options
+
+```bash
+# Input/Output
+optimize-img <input>                 # Input file or directory
+optimize-img <input> -o <output>     # Custom output path
+
+# Format & Quality
+optimize-img <input> --format webp   # Output format (webp, jpeg, png, avif)
+optimize-img <input> --quality 85    # Quality (0-100, default: 80)
+
+# Resizing
+optimize-img <input> --width 800    # Resize width
+optimize-img <input> --height 600    # Resize height
+optimize-img <input> --resize 1/2   # Resize by ratio
+optimize-img <input> --percent 50    # Resize by percentage
+
+# Presets
+optimize-img <input> --preset quality    # Quality preset (default, balanced, quality, performant)
+```
+
+### Advanced Options
+
+```bash
+# Bulk Processing
+optimize-img <directory> --bulk          # Process entire directory recursively
+optimize-img <directory> --bulk --parallel 8  # Parallel processing
+
+# Metadata & File Operations
+optimize-img <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
+optimize-img <input> --delete-originals  # Delete original files after optimization
+
+# Configuration
+optimize-img <input> --config ./config.json  # Custom configuration file
+optimize-img <input> --verbose          # Enable verbose logging
+optimize-img <input> --yes              # Skip confirmation prompts
+```
+
+### Platform-Specific Notes
+
+- **Windows**: The `--delete-originals` flag is **NOT SUPPORTED** on Windows systems due to fundamental Windows file system locking behavior. Files remain locked and cannot be deleted reliably. Use alternative workflows for Windows environments.
+- **Linux/macOS**: File operations generally work as expected with proper permissions.
+
+Use `optimize-img --help` for the complete list of options and descriptions.
+
 ### Percentages
 
 ```bash
@@ -258,6 +307,16 @@ optimize-img ./photos --bulk --yes
 optimize-img ./images --bulk --delete-originals
 ```
 
+### ⚠️ Platform Limitations - IMPORTANT
+
+- **Windows**: **`--delete-originals` IS NOT SUPPORTED** - Due to fundamental Windows file system architecture, file deletion operations cannot be guaranteed to work reliably. Files remain locked by the system and third-party applications, making safe deletion impossible.
+- **Linux/macOS**: File operations work reliably with proper permissions.
+
+**Windows Workflow Recommendation**:
+- Process images without deletion (`optimize-img ./images --bulk`)
+- Manually clean up original files when they are not in use
+- Use the tool primarily for optimization without automated deletion
+
 ---
 
 ## 🎮 Real-time 3D / Engine Workflows
@@ -293,36 +352,36 @@ It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-p
 
 By default, optimize-img:
 
-* **Strips EXIF + ICC metadata**
-* Reduces file size
-* Avoids accidental GPS / camera info leaks
+* **Preserves EXIF + ICC metadata**
+* Maintains color accuracy and archival information
+* Respects photographer and creator metadata
 
 This is usually what you want for:
 
-* Web assets
-* 3D textures / technical maps
-* General image optimization
+* Photography and archival workflows
+* Color-managed professional workflows
+* Projects requiring attribution or copyright information
 
-If you need metadata:
+If you need to remove metadata for privacy or size reduction:
 
 ```bash
 # CLI
-optimize-img ./photos --bulk --keep-metadata
+optimize-img ./photos --bulk --strip-metadata
 ```
 
 Config:
 
 ```json
 {
-  "stripMetadata": false,
+  "stripMetadata": false, // metadata preserved by default
   "keepOriginals": true
 }
 ```
 
 **Good rule of thumb:**
 
-* **Keep metadata** for photography / archival / strict color-managed workflows.
-* **Strip metadata** (default) for web, apps, and all technical maps (normal/roughness/metalness/etc.) – they don't benefit from EXIF/ICC.
+* **Preserve metadata** (default) for photography / archival / strict color-managed workflows.
+* **Strip metadata** for web, apps, and technical maps when privacy or maximum size reduction is critical.
 
 ---
 
@@ -356,6 +415,40 @@ Processing time: 124ms
 ---
 
 
+
+## ⚠️ Error Handling & Platform Notes
+
+### Windows File System Limitations
+
+**File Deletion Issues**: On Windows systems, the `--delete-originals` flag **IS NOT SUPPORTED** due to:
+- Fundamental Windows file locking architecture
+- System-level file locking by antivirus, file explorers, and other processes
+- Permission and security restrictions inherent to Windows
+- File system caching and delayed release mechanisms
+
+**Windows-Specific Workflow**:
+```bash
+# Process without deletion (required for Windows)
+optimize-img ./images --bulk
+
+# Manual cleanup required - files cannot be deleted automatically
+# Clean up originals manually when files are confirmed not in use
+```
+
+**Note**: Windows file system behavior prevents reliable automated deletion. This is a platform limitation, not a tool limitation.
+
+### Common Error Scenarios
+
+1. **File Permission Errors**: Ensure you have write permissions to both input and output directories
+2. **Disk Space Issues**: Optimization may require temporary disk space for processing
+3. **Unsupported Formats**: Check that input formats are supported by Sharp
+4. **Memory Constraints**: Large images may require adequate system memory
+
+### Platform Compatibility
+
+- **Linux/macOS**: Full functionality with reliable file operations
+- **Windows**: Optimization works reliably; file deletion may be limited
+- **CI/CD Environments**: Use `--yes` flag to skip interactive prompts
 
 ## 🛠️ Troubleshooting & Examples
 

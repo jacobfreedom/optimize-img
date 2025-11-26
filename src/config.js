@@ -23,7 +23,7 @@ const PRESETS = {
   performant: {
     format: 'webp',
     quality: 60,
-    stripMetadata: true,
+    stripMetadata: false,
     keepOriginals: true
   }
 }
@@ -36,7 +36,7 @@ const SUPPORTED_FORMATS = {
 const DEFAULT_CONFIG = {
   format: 'webp',
   quality: 80,
-  stripMetadata: true,
+  stripMetadata: false,
   keepOriginals: true,
   parallel: 4,
   verbose: false,

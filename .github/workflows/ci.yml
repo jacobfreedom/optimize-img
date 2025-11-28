@@ -65,8 +65,8 @@ jobs:
     - name: Test CLI functionality
       run: |
         npm link
-        optimize-img --version
-        optimize-img --help
+        optimg --version
+        optimg --help
 
   security:
     runs-on: ubuntu-latest

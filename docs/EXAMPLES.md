@@ -10,7 +10,7 @@ This file contains detailed examples and recipes for different use cases. For ba
 - **[Performance Optimization](#-performance-optimization)** - Large batches, memory management
 - **[CI/CD Integration](#-cicd-integration)** - GitHub Actions, GitLab CI, Docker
 - **[Advanced Configuration](#-advanced-configuration)** - Multi-format output, environment configs
-- **[Performance Benchmarks](#-performance-benchmarks)** - Real-world test results and optimization techniques
+- **[Test Results](./TEST_RESULTS.md)** - Comprehensive metrics from recent runs
 
 ## 📁 Folder Structure Examples
 
@@ -156,90 +156,7 @@ optimg ./stage1 --bulk --preset performant
 optimg ./stage2 --bulk --preset performant
 ```
 
-#### Real-World Test Results
 
-**Test Case 1: Mixed Photography Collection (12 images, 98.5MB total)**
-```
-📊 Comprehensive Metrics:
-   • Average original file size: 8.21 MB
-   • Average optimized file size: 6.47 MB  
-   • Average size reduction: 26.2%
-   • Total storage saved: 20.9 MB
-   • Overall size reduction: 21.0% (98.5MB → 77.6MB)
-
-⚡ Performance Metrics:
-   • Total processing time: 0.85s
-   • Average time per file: 71ms
-   • Processing speed: 14.1 files/second
-   • Processing efficiency: 96.7%
-```
-
-**Test Case 2: Web Asset Collection (23 images, 2.57MB total)**
-```
-📊 Comprehensive Metrics:
-   • Average original file size: 114.7 KB
-   • Average optimized file size: 78.8 KB
-   • Average size reduction: 31.4%
-   • Total storage saved: 826.3 KB
-   • Overall size reduction: 31.4% (2.57MB → 1.76MB)
-
-⚡ Performance Metrics:
-   • Total processing time: 0.93s
-   • Average time per file: 40ms
-   • Processing speed: 24.7 files/second
-   • Processing efficiency: 98.1%
-```
-
-#### Detailed File-by-File Comparison Table
-
-**Folder 1 Test Results (12 images):**
-
-| File | Original Size | Optimized Size | Reduction | Processing Time |
-|------|---------------|----------------|-----------|-----------------|
-| c328698f498b96bf2417d41b418b9955.jpg | 24.78 KB | 17.33 KB | 30.1% | 38ms |
-| ef72b2e029f0fc1e4083570f5fda2efb.jpg | 33.57 KB | 19.61 KB | 41.6% | 53ms |
-| 883ba6f9d7a201c773b5b22062517346.jpg | 26.05 KB | 16.32 KB | 37.4% | 35ms |
-| a7e52d26abd3060fdbc86b319e2c6bb4.jpg | 49.75 KB | 34.70 KB | 30.2% | 74ms |
-| d3c2753c79d85f42cf202602399363de.jpg | 64.98 KB | 58.87 KB | 9.4% | 84ms |
-| 6588c6a50ffe2bf5a6eb93ac96d4b434.jpg | 47.09 KB | 38.66 KB | 17.9% | 50ms |
-| 7f63ee680c8cf58a34a594f7e4de4a84.jpg | 62.98 KB | 37.21 KB | 40.9% | 87ms |
-| 3b87f8e785ad2b4b7a61e0d9c9ba3d2f.jpg | 21.95 KB | 15.36 KB | 30.0% | 30ms |
-| 3cb2ff836e049b486298c49a4ac3df7d.jpg | 71.07 KB | 42.04 KB | 40.9% | 91ms |
-| 2ff0aed4fb0543c53c837cd618ec9c75.jpg | 104.07 KB | 103.38 KB | 0.7% | 128ms |
-| 64c30dc044b18c2024cfa31c6e4e2aca.jpg | 221.17 KB | 189.78 KB | 14.2% | 268ms |
-| 7b63133c02a24a743db0095253167fb2.jpg | 452.76 KB | 359.12 KB | 20.7% | 469ms |
-
-**Summary Statistics:**
-- **Total Files**: 12
-- **Total Original Size**: 1.15 MB
-- **Total Optimized Size**: 0.91 MB
-- **Average File Size (Before)**: 98.35 KB
-- **Average File Size (After)**: 77.70 KB
-- **Average Reduction**: 26.2%
-- **Total Space Saved**: 247.86 KB
-- **Processing Speed**: 21.5 files/second
-- **Average Processing Time**: 117ms per file
-
-#### Optimization Impact Analysis
-
-**Bandwidth Savings Example:**
-- Original website images: 15MB total
-- After optimization: 10.5MB total (30% reduction)
-- Monthly visitors: 10,000
-- **Monthly bandwidth saved**: 45GB
-- **Annual cost savings**: ~$50-200 (depending on CDN provider)
-
-**Loading Performance Improvement:**
-- Original page load time: 3.2 seconds
-- After image optimization: 2.4 seconds (25% faster)
-- User experience improvement: Significant, especially on mobile
-- SEO impact: Positive (page speed is ranking factor)
-
-**Storage Efficiency:**
-- Photo collection: 50GB original
-- After optimization: 35GB (30% reduction)
-- Storage cost savings: ~$3-15/month (cloud storage)
-- Backup time reduction: 30% faster uploads/downloads
 
 ### Optimization Techniques Explained
 
@@ -333,26 +250,26 @@ optimg ./stage2 --bulk --preset performant
 
 ```bash
 # High-resolution finals (metadata preserved by default for copyright)
-optimize-img ./client-photos --bulk --preset quality --format jpeg
+npx optimg ./client-photos --bulk --preset quality --format jpeg
 
 # Web gallery (smaller, faster - strip metadata for privacy/size)
-optimize-img ./client-photos --bulk --preset balanced --width 1200 --format webp --strip-metadata --output ./web-gallery
+npx optimg ./client-photos --bulk --preset balanced --width 1200 --format webp --strip-metadata --output ./web-gallery
 
 # Social media versions
-optimize-img ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
+npx optimg ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
 ```
 
 ### Portfolio Optimization
 
 ```bash
 # Full resolution for download
-optimize-img ./portfolio --bulk --preset quality --format jpeg --output ./portfolio/full
+npx optimg ./portfolio --bulk --preset quality --format jpeg --output ./portfolio/full
 
 # Web display
-optimize-img ./portfolio --bulk --preset balanced --width 1600 --format webp --output ./portfolio/web
+npx optimg ./portfolio --bulk --preset balanced --width 1600 --format webp --output ./portfolio/web
 
 # Thumbnails
-optimize-img ./portfolio --bulk --preset performant --width 400 --format webp --output ./portfolio/thumbs
+npx optimg ./portfolio --bulk --preset performant --width 400 --format webp --output ./portfolio/thumbs
 ```
 
 ## CI/CD Integration
@@ -398,8 +315,8 @@ jobs:
 optimize-images:
   image: node:18
   script:
-    - npm install -g optimize-img
-    - optimize-img ./images --bulk --preset balanced
+    - npm install -g optimg-cli
+    - optimg ./images --bulk --preset balanced
   only:
     changes:
       - images/**/*
@@ -410,14 +327,14 @@ optimize-images:
 ```dockerfile
 FROM node:18-alpine
 
-RUN npm install -g optimize-img
+RUN npm install -g optimg-cli
 
 WORKDIR /app
 COPY images/ ./images/
 
-RUN optimize-img ./images --bulk --preset balanced
+RUN optimg ./images --bulk --preset balanced
 
-CMD ["optimize-img", "--help"]
+CMD ["optimg", "--help"]
 ```
 
 ## 🔧 Advanced Configuration
@@ -425,7 +342,7 @@ CMD ["optimize-img", "--help"]
 ### Environment-Specific Configs
 
 ```js
-// optimize-img.config.js
+// optimg.config.js
 module.exports = {
   format: 'webp',
   quality: 85,
@@ -458,44 +375,13 @@ module.exports = {
 ```bash
 # Generate multiple formats for broad compatibility
 for format in webp jpeg png; do
-  optimize-img ./images --bulk --format $format --output ./optimized/$format
+  optimg ./images --bulk --format $format --output ./optimized/$format
 done
 ```
 
-## 📊 Performance Benchmarks
+## 📊 Performance & Results
 
-### Processing Speed Examples
-
-```bash
-# Modern laptop (8 cores, SSD)
-# 100 images (2-5MB each)
-optimize-img ./test-images --bulk --preset balanced --parallel 8
-# Typical result: ~45 seconds for 100 images
-
-# Server (16 cores, fast storage)
-# 1000 images (1-10MB each)
-optimize-img ./large-collection --bulk --preset performant --parallel 16
-# Typical result: ~3-5 minutes for 1000 images
-```
-
-### Size Reduction Examples
-
-```bash
-# Photography (JPEG → WebP)
-# Original: 25MB folder
-# After: 8.5MB (66% reduction)
-optimize-img ./photos --bulk --preset balanced
-
-# 3D Textures (PNG → WebP)
-# Original: 150MB folder
-# After: 45MB (70% reduction)
-optimize-img ./textures --bulk --preset performant
-
-# Web Assets (Mixed formats)
-# Original: 50MB folder
-# After: 18MB (64% reduction)
-optimize-img ./web-assets --bulk --preset balanced
-```
+For comprehensive, up-to-date test runs and metrics, see `docs/TEST_RESULTS.md`.
 
 ## 🎯 Best Practices
 
@@ -527,7 +413,7 @@ If you encounter issues:
 - **Windows users**: Check [Windows-specific troubleshooting](./TROUBLESHOOTING.md#windows-issues) for file system limitations and EPERM errors
 - **Memory issues**: Reduce `--parallel` setting or process smaller batches
 - **Quality concerns**: Use `--verbose` flag to see detailed processing information
-- **Format problems**: Run `optimize-img formats` to see supported formats
+- **Format problems**: Run `npx optimg formats` to see supported formats
 
 ---
 

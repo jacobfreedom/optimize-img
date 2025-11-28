@@ -4,8 +4,7 @@
   "description": "High-performance image optimization CLI with modern format support, bulk processing, and presets for developers",
   "main": "src/index.js",
   "bin": {
-    "optimg": "./bin/cli.js",
-    "optimize-img": "./bin/cli.js"
+    "optimg": "./bin/cli.js"
   },
   "scripts": {
     "start": "node bin/cli.js",
@@ -35,12 +34,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jacobfreedom/optimize-img.git"
+    "url": "https://github.com/jacobfreedom/optimg-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/jacobfreedom/optimize-img/issues"
+    "url": "https://github.com/jacobfreedom/optimg-cli/issues"
   },
-  "homepage": "https://github.com/jacobfreedom/optimize-img#readme",
+  "homepage": "https://github.com/jacobfreedom/optimg-cli#readme",
   "engines": {
     "node": ">=18.0.0"
   },

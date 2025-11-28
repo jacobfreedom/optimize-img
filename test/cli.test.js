@@ -108,7 +108,7 @@ describe('CLI Integration', () => {
         await runCLI('')
       } catch ({ stdout }) {
         expect(stdout).toContain('Usage:')
-        expect(stdout).toContain('optimize-img')
+        expect(stdout).toContain('optimg')
       }
     })
 

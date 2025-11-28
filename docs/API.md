@@ -15,7 +15,7 @@ The main class for image optimization operations.
 ### Constructor
 
 ```javascript
-const ImageOptimizer = require('optimize-img');
+const ImageOptimizer = require('optimg-cli');
 
 const optimizer = new ImageOptimizer(options);
 ```
@@ -136,7 +136,7 @@ console.log(optimizer.options);
 ### Loading Configuration
 
 ```javascript
-const { loadConfig } = require('optimize-img/src/config');
+const { loadConfig } = require('optimg-cli/src/config');
 
 // Load from default locations
 const config = await loadConfig();
@@ -180,7 +180,7 @@ module.exports = {
 ### Available Presets
 
 ```javascript
-const { getPreset, listPresets } = require('optimize-img/src/config');
+const { getPreset, listPresets } = require('optimg-cli/src/config');
 
 // Get specific preset
 const preset = getPreset('quality');
@@ -201,7 +201,7 @@ console.log(presets);
 ### Custom Presets
 
 ```javascript
-const { PRESETS } = require('optimize-img/src/config');
+const { PRESETS } = require('optimg-cli/src/config');
 
 // Add custom preset
 PRESETS.custom = {
@@ -233,7 +233,7 @@ try {
 ### Validation Functions
 
 ```javascript
-const { validateQuality, validateFormat } = require('optimize-img/src/config');
+const { validateQuality, validateFormat } = require('optimg-cli/src/config');
 
 try {
   const quality = validateQuality(85); // Returns 85
@@ -273,7 +273,7 @@ optimizer.run('./images').then(() => {
 ### Custom Processing Pipeline
 
 ```javascript
-const ImageOptimizer = require('optimize-img');
+const ImageOptimizer = require('optimg-cli');
 
 class CustomOptimizer extends ImageOptimizer {
   async processFile(inputPath) {
@@ -315,8 +315,8 @@ console.log('Final stats:', optimizer.stats);
 ## TypeScript Support
 
 ```typescript
-import ImageOptimizer from 'optimize-img';
-import { ImageOptimizerOptions, ProcessingStats } from 'optimize-img';
+import ImageOptimizer from 'optimg-cli';
+import { ImageOptimizerOptions, ProcessingStats } from 'optimg-cli';
 
 const options: ImageOptimizerOptions = {
   format: 'webp',
@@ -331,7 +331,7 @@ const stats: ProcessingStats = optimizer.stats;
 
 ### Windows File System Limitations
 
-When using the optimize-img API on **Windows systems**, be aware of the following limitations:
+When using the optimg API on **Windows systems**, be aware of the following limitations:
 
 ```javascript
 // Windows-specific configuration

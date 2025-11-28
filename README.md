@@ -1,27 +1,25 @@
-# optimize-img
+# optimg
 
 A high-performance image optimization CLI for developers with modern format support, bulk processing of folders and subfolders, and presets.
 
 [![npm version](https://img.shields.io/npm/v/optimg-cli.svg)](https://www.npmjs.com/package/optimg-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub](https://img.shields.io/badge/GitHub-optimize--img-181717.svg)](https://github.com/jacobfreedom)
+[![GitHub](https://img.shields.io/badge/GitHub-optimg--cli-181717.svg)](https://github.com/jacobfreedom/optimg-cli)
 
 ---
 
 ## ⚡ TL;DR
 
 ```bash
-npm install -g optimg-cli
-
-# Optimize all images in a folder
-optimg ./images --bulk --preset balanced
+# Run without global install
+npx optimg ./images --bulk --preset balanced --yes
 ```
 
 ---
 
-## 🌟 Why optimize-img?
+## 🌟 Why optimg?
 
-Originally built for **3D texture optimization**, optimize-img has grown into a general-purpose image pipeline that balances:
+Originally built for **3D texture optimization**, optimg has grown into a general-purpose image pipeline that balances:
 
 - **Quality** – sensible defaults that don't wreck your images  
 - **Performance** – built on [Sharp](https://sharp.pixelplumbing.com/), highly parallel  
@@ -70,16 +68,16 @@ optimg photo.jpg --format avif
 
 ## 📦 Installation
 
-### CLI (Global – recommended)
+### npx (recommended)
 
 ```bash
-npm install -g optimg-cli
+npx optimg --help
 ```
 
-Then:
+Run commands directly without modifying your PATH:
 
 ```bash
-optimg --help
+npx optimg <input> --bulk-inplace --preset balanced --yes
 ```
 
 ### Project (Local)
@@ -114,35 +112,35 @@ Then run it with `npm run optimize`.
 
 ```bash
 # Basic WebP optimization (default format)
-optimg photo.jpg
+npx optimg photo.jpg
 
 # Custom quality
-optimg photo.jpg --quality 90
+npx optimg photo.jpg --quality 90
 
 # Resize + change format
-optimg photo.png --width 800 --format jpeg
+npx optimg photo.png --width 800 --format jpeg
 
 # Ratio-based resize (50%)
-optimg texture.jpg --resize 1/2
+npx optimg texture.jpg --resize 1/2
 
 # Percent-based resize
-optimg photo.jpg --percent 25
+npx optimg photo.jpg --percent 25
 
 # Explicit output path
-optimg input.jpg -o output.webp
+npx optimg input.jpg -o output.webp
 ```
 
 ### Bulk / Folders
 
 ```bash
 # Recursively process a directory (creates ./optimized by default)
-optimg ./images --bulk
+npx optimg ./images --bulk
 
 # With custom settings
-optimg ./assets --bulk --format webp --quality 75 --parallel 8
+npx optimg ./assets --bulk --format webp --quality 75 --parallel 8
 
 # Custom output directory
-optimg ./images --bulk -o ./optimized/
+npx optimg ./images --bulk -o ./optimized/
 ```
 
 ---
@@ -176,9 +174,9 @@ Think of presets as **one-click profiles**:
 Examples:
 
 ```bash
-optimg photo.jpg --preset quality
-optimg ./images --bulk --preset balanced
-optimg ./images --bulk --preset performant
+npx optimg photo.jpg --preset quality
+npx optimg ./images --bulk --preset balanced
+npx optimg ./images --bulk --preset performant
 ```
 
 ---
@@ -189,13 +187,13 @@ optimg ./images --bulk --preset performant
 
 ```bash
 # 4K → 2K
-optimg texture_4k.jpg --resize 1/2
+npx optimg texture_4k.jpg --resize 1/2
 
 # 4K → 1K
-optimg texture_4k.jpg --resize 1/4
+npx optimg texture_4k.jpg --resize 1/4
 
 # Custom
-optimg texture.jpg --resize 2/3
+npx optimg texture.jpg --resize 2/3
 ```
 
 ---
@@ -206,40 +204,40 @@ optimg texture.jpg --resize 2/3
 
 ```bash
 # Input/Output
-optimg <input>                 # Input file or directory
-optimg <input> -o <output>     # Custom output path
+npx optimg <input>                 # Input file or directory
+npx optimg <input> -o <output>     # Custom output path
 
 # Format & Quality
-optimg <input> --format webp   # Output format (webp, jpeg, png, avif)
-optimg <input> --quality 85    # Quality (0-100, default: 80)
-optimg <input> --lossless      # Use lossless compression when supported
-optimg <input> --loseless      # Alias for --lossless
+npx optimg <input> --format webp   # Output format (webp, jpeg, png, avif)
+npx optimg <input> --quality 85    # Quality (0-100, default: 80)
+npx optimg <input> --lossless      # Use lossless compression when supported
+npx optimg <input> --loseless      # Alias for --lossless
 
 # Resizing
-optimg <input> --width 800    # Resize width
-optimg <input> --height 600    # Resize height
-optimg <input> --resize 1/2   # Resize by ratio
-optimg <input> --percent 50    # Resize by percentage
+npx optimg <input> --width 800    # Resize width
+npx optimg <input> --height 600    # Resize height
+npx optimg <input> --resize 1/2   # Resize by ratio
+npx optimg <input> --percent 50    # Resize by percentage
 
 # Presets
-optimg <input> --preset quality    # Quality preset (default, balanced, quality, performant)
+npx optimg <input> --preset quality    # Quality preset (default, balanced, quality, performant)
 ```
 
 ### Advanced Options
 
 ```bash
 # Bulk Processing
-optimg <directory> --bulk          # Process entire directory recursively
-optimg <directory> --bulk --parallel 8  # Parallel processing
+npx optimg <directory> --bulk          # Process entire directory recursively
+npx optimg <directory> --bulk --parallel 8  # Parallel processing
 ```bash
 # Metadata & File Operations
-optimg <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
-optimg <input> --delete-originals  # Delete original files after optimization
+npx optimg <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
+npx optimg <input> --delete-originals  # Delete original files after optimization
 ```bash
 # Configuration
-optimg <input> --config ./config.json  # Custom configuration file
-optimg <input> --verbose          # Enable verbose logging
-optimg <input> --yes              # Skip confirmation prompts
+npx optimg <input> --config ./config.json  # Custom configuration file
+npx optimg <input> --verbose          # Enable verbose logging
+npx optimg <input> --yes              # Skip confirmation prompts
 
 ### Lossless Compression
 
@@ -249,10 +247,10 @@ Disable it when you prefer smaller outputs over exact preservation:
 
 ```bash
 # CLI
-optimg photo.jpg --format webp --lossless
+npx optimg photo.jpg --format webp --lossless
 
 # Alias supported (common misspelling):
-optimg photo.jpg --loseless
+npx optimg photo.jpg --loseless
 
 # Config file (JSON)
 {
@@ -290,7 +288,7 @@ Two modes for bulk processing:
   - Uses `-optimized` suffix unless `--delete-originals` is set
   - Example:
     ```bash
-    optimg ./images --bulk-inplace --yes
+    npx optimg ./images --bulk-inplace --yes
     ```
 
 Error handling:
@@ -307,16 +305,16 @@ Use `optimg --help` for the complete list of options and descriptions.
 ### Percentages
 
 ```bash
-optimize-img photo.jpg --percent 50
-optimize-img photo.jpg --percent 25
+npx optimg photo.jpg --percent 50
+npx optimg photo.jpg --percent 25
 ```
 
 ### Dimensions
 
 ```bash
-optimize-img photo.jpg --width 1200
-optimize-img photo.jpg --height 800
-optimize-img photo.jpg --width 800 --height 600
+npx optimg photo.jpg --width 1200
+npx optimg photo.jpg --height 800
+npx optimg photo.jpg --width 800 --height 600
 ```
 
 Aspect ratio is preserved unless both width and height force a different ratio.
@@ -355,13 +353,13 @@ Safety features:
 
 ```bash
 # Confirmation prompt for bulk by default
-optimize-img ./photos --bulk
+npx optimg ./photos --bulk
 
 # Skip prompts (for scripts/CI)
-optimize-img ./photos --bulk --yes
+npx optimg ./photos --bulk --yes
 
 # Delete originals ONLY when the optimized file is smaller
-optimize-img ./images --bulk --delete-originals
+npx optimg ./images --bulk --delete-originals
 ```
 
 ### ⚠️ Platform Limitations - IMPORTANT
@@ -370,7 +368,7 @@ optimize-img ./images --bulk --delete-originals
 - **Linux/macOS**: File operations work reliably with proper permissions.
 
 **Windows Workflow Recommendation**:
-- Process images without deletion (`optimize-img ./images --bulk`)
+- Process images without deletion (`npx optimg ./images --bulk`)
 - Manually clean up original files when they are not in use
 - Use the tool primarily for optimization without automated deletion
 
@@ -378,17 +376,17 @@ optimize-img ./images --bulk --delete-originals
 
 ## 🎮 Real-time 3D / Engine Workflows
 
-`optimize-img` started as a 3D texture tool. Common use:
+`optimg` started as a 3D texture tool. Common use:
 
 ```bash
 # 4K → 2K (high quality)
-optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90
+npx optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90
 
 # 2K → 1K (mid-tier)
-optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80
+npx optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80
 
 # Mobile / low-spec
-optimg ./textures/final --bulk --resize 1/2 --preset performant
+npx optimg ./textures/final --bulk --resize 1/2 --preset performant
 ```
 
 Typical pattern:
@@ -397,7 +395,7 @@ Typical pattern:
 * Generate a couple of variants (e.g. `balanced` vs `performant`), plug into your engine, see how materials look under real lights.
 * Originals are kept unless you pass `--delete-originals`, so you can iterate safely.
 
-It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimize-img` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). 
+It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-processing / lookdev step before final import, heavily inspired by how tools like [glTF-Transform](https://gltf-transform.dev/) handle texture workflows. I personally use `optimg` to iterate heavily on texture resolution downscaling and quality until I hit the best visual result for a given budget (especially on sensitive materials like fabric). 
 
 **This is built for running multiple quality iterations. After that, I always run geometry/scene optimization in glTF-Transform.**
 
@@ -407,7 +405,7 @@ It doesn’t replace engine-specific formats (KTX2, BCn…). It’s a fast pre-p
 
 ## 🧾 Metadata & Color Profiles
 
-By default, optimize-img:
+By default, optimg:
 
 * **Preserves EXIF + ICC metadata**
 * Maintains color accuracy and archival information
@@ -423,7 +421,7 @@ If you need to remove metadata for privacy or size reduction:
 
 ```bash
 # CLI
-optimize-img ./photos --bulk --strip-metadata
+npx optimg ./photos --bulk --strip-metadata
 ```
 
 Config:
@@ -486,7 +484,7 @@ Processing time: 124ms
 **Windows-Specific Workflow**:
 ```bash
 # Process without deletion (required for Windows)
-optimize-img ./images --bulk
+npx optimg ./images --bulk
 
 # Manual cleanup required - files cannot be deleted automatically
 # Clean up originals manually when files are confirmed not in use
@@ -514,6 +512,7 @@ To keep this README lean:
 * **Examples** → [`docs/EXAMPLES.md`](./docs/EXAMPLES.md)
 * **Troubleshooting** → [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md)
 * **Configuration & Programmatic Usage** → [`docs/PROGRAMMATIC_USAGE.md#configuration`](./docs/PROGRAMMATIC_USAGE.md#configuration)
+* **Test Results** → [`docs/TEST_RESULTS.md`](./docs/TEST_RESULTS.md)
 
 
 You'll find:
@@ -534,15 +533,15 @@ MIT – see [LICENSE](./LICENSE).
 
 Issues and PRs welcome.
 
-* 🐛 [GitHub Issues](https://github.com/jacobfreedom/optimize-img/issues)
-* 💬 [GitHub Discussions](https://github.com/jacobfreedom/optimize-img/discussions)
+* 🐛 [GitHub Issues](https://github.com/jacobfreedom/optimg-cli/issues)
+* 💬 [GitHub Discussions](https://github.com/jacobfreedom/optimg-cli/discussions)
 
 ---
 
 Start with:
 
 ```bash
-optimg ./images --bulk --preset balanced
+npx optimg ./images --bulk --preset balanced
 ```
 
 If it looks good, wire it into your build/CI and forget about it.

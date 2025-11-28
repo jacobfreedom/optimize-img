@@ -1,6 +1,6 @@
-# Contributing to Optimize-img
+# Contributing to optimg
 
-Thank you for your interest in contributing to Optimize-img! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to optimg! This document provides guidelines and information for contributors.
 
 ## Code of Conduct
 
@@ -93,8 +93,8 @@ test: add unit tests for config validation
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/optimize-img.git
-cd optimize-img
+git clone https://github.com/yourusername/optimg-cli.git
+cd optimg-cli
 
 # Install dependencies
 npm install
@@ -107,13 +107,13 @@ npm run lint
 
 # Test CLI locally
 npm link
-optimize-img --help
+optimg --help
 ```
 
 ### Project Structure
 
 ```
-optimize-img/
+optimg-cli/
 ├── src/                    # Core library code
 │   ├── index.js           # Main ImageOptimizer class
 │   └── config.js          # Configuration and presets
@@ -162,4 +162,4 @@ Contributors will be recognized in:
 - Release notes
 - GitHub contributors page
 
-Thank you for helping make Optimize-img better!
+Thank you for helping make optimg better!

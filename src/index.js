@@ -392,6 +392,7 @@ class ImageOptimizer {
 
     const inputDir = path.dirname(inputPath)
     const inputName = path.basename(inputPath, path.extname(inputPath))
+    // Determine original extension (not used in current suffix rules)
 
     if (bulk) {
       if (this.options.bulkInplace) {
@@ -405,12 +406,9 @@ class ImageOptimizer {
       return path.join(optimizedDir, `${inputName}.${format}`)
     }
 
-    // For single files: add suffix by default, replace in-place only when delete-originals is specified
     if (this.options.deleteOriginals) {
       return path.join(inputDir, `${inputName}.${format}`)
     }
-
-    // Add suffix to preserve original
     return path.join(inputDir, `${inputName}-optimized.${format}`)
   }
 

@@ -250,26 +250,26 @@ optimg ./stage2 --bulk --preset performant
 
 ```bash
 # High-resolution finals (metadata preserved by default for copyright)
-npx optimg ./client-photos --bulk --preset quality --format jpeg
+optimg ./client-photos --bulk --preset quality --format jpeg
 
 # Web gallery (smaller, faster - strip metadata for privacy/size)
-npx optimg ./client-photos --bulk --preset balanced --width 1200 --format webp --strip-metadata --output ./web-gallery
+optimg ./client-photos --bulk --preset balanced --width 1200 --format webp --strip-metadata --output ./web-gallery
 
 # Social media versions
-npx optimg ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
+optimg ./client-photos --bulk --preset performant --width 1080 --format jpeg --output ./social
 ```
 
 ### Portfolio Optimization
 
 ```bash
 # Full resolution for download
-npx optimg ./portfolio --bulk --preset quality --format jpeg --output ./portfolio/full
+optimg ./portfolio --bulk --preset quality --format jpeg --output ./portfolio/full
 
 # Web display
-npx optimg ./portfolio --bulk --preset balanced --width 1600 --format webp --output ./portfolio/web
+optimg ./portfolio --bulk --preset balanced --width 1600 --format webp --output ./portfolio/web
 
 # Thumbnails
-npx optimg ./portfolio --bulk --preset performant --width 400 --format webp --output ./portfolio/thumbs
+optimg ./portfolio --bulk --preset performant --width 400 --format webp --output ./portfolio/thumbs
 ```
 
 ## CI/CD Integration
@@ -413,7 +413,7 @@ If you encounter issues:
 - **Windows users**: Check [Windows-specific troubleshooting](./TROUBLESHOOTING.md#windows-issues) for file system limitations and EPERM errors
 - **Memory issues**: Reduce `--parallel` setting or process smaller batches
 - **Quality concerns**: Use `--verbose` flag to see detailed processing information
-- **Format problems**: Run `npx optimg formats` to see supported formats
+- **Format problems**: Run `optimg formats` to see supported formats
 
 ---
 

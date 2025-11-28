@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New `docs/TEST_RESULTS.md` summarizing recent CLI runs and metrics.
 
-### Meta
-- 2025-11-28 — Author: TraeAI
 ## 1.1.0 - 2025-11-28
 
 ### Added
@@ -40,5 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Verification
 - Presets & Lossless: Verified that presets merge with default config (`lossless: true`) and that WebP/AVIF encoders receive `lossless` flags (`src/index.js:442–451`).
 
-### Meta
-- 2025-11-28 — Author: TraeAI
+## 1.2.2 - 2025-11-28
+
+### Changed
+- Documentation: Linkified README “Further Docs” bullets to clickable links pointing to `./docs/*` files.
+- Documentation: Aligned docs formatting and examples to global `optimg` usage for consistency.

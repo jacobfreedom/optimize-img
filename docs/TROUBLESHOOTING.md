@@ -80,7 +80,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 2. **Use absolute paths**:
    ```bash
-   npx optimg /full/path/to/image.jpg
+   optimg /full/path/to/image.jpg
    ```
 
 3. **Check file permissions**:
@@ -97,14 +97,14 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **Check supported formats**:
    ```bash
-   npx optimg formats
+   optimg formats
    ```
 
 2. **Convert to supported format first**:
    ```bash
    # Convert HEIC to JPEG first
    sips -s format jpeg input.heic --out input.jpg
-   npx optimg input.jpg
+   optimg input.jpg
    ```
 
 3. **Update file extension**:
@@ -122,18 +122,18 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **Specify different output**:
    ```bash
-   npx optimg input.jpg -o output-new.webp
+   optimg input.jpg -o output-new.webp
    ```
 
 2. **Remove existing files**:
    ```bash
    rm ./output.webp
-   npx optimg input.jpg
+   optimg input.jpg
    ```
 
 3. **Use different format**:
    ```bash
-   npx optimg input.jpg --format jpeg
+   optimg input.jpg --format jpeg
    ```
 
 ### Performance Issues
@@ -146,14 +146,14 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **Reduce parallel processing**:
    ```bash
-   npx optimg ./large-images --bulk --parallel 2
+   optimg ./large-images --bulk --parallel 2
    ```
 
 2. **Process in smaller batches**:
    ```bash
    # Process subdirectories separately
-   npx optimg ./images/batch1 --bulk
-   npx optimg ./images/batch2 --bulk
+   optimg ./images/batch1 --bulk
+   optimg ./images/batch2 --bulk
    ```
 
 3. **Increase Node.js memory limit**:
@@ -169,18 +169,18 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **Increase parallel processing**:
    ```bash
-   npx optimg ./images --bulk --parallel 8
+   optimg ./images --bulk --parallel 8
    ```
 
 2. **Use faster preset**:
    ```bash
-   npx optimg ./images --bulk --preset performant
+   optimg ./images --bulk --preset performant
    ```
 
 3. **Process only specific formats**:
    ```bash
    # Process only JPEG files
-   find ./images -name "*.jpg" -exec npx optimg {} \;
+   find ./images -name "*.jpg" -exec optimg {} \;
    ```
 
 ### Quality Issues
@@ -193,17 +193,17 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **Use higher quality setting**:
    ```bash
-   npx optimg input.jpg --quality 90
+   optimg input.jpg --quality 90
    ```
 
 2. **Use quality preset**:
    ```bash
-   npx optimg input.jpg --preset quality
+   optimg input.jpg --preset quality
    ```
 
 3. **Try different format**:
    ```bash
-   npx optimg input.jpg --format png  # Lossless
+   optimg input.jpg --format png  # Lossless
    ```
 
 #### "Colors look different"
@@ -215,9 +215,9 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 1. **Preserve color profiles**:
    ```bash
    # Use --keep-metadata to preserve color profiles and EXIF data
-   npx optimg input.jpg --keep-metadata
+   optimg input.jpg --keep-metadata
    # Or use custom config
-   npx optimg input.jpg --config ./preserve-color-profile.json
+   optimg input.jpg --config ./preserve-color-profile.json
    ```
 
 2. **Use specific color space**:
@@ -241,7 +241,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 2. **Use absolute path**:
    ```bash
-   npx optimg input.jpg --config /full/path/to/config.json
+   optimg input.jpg --config /full/path/to/config.json
    ```
 
 3. **Verify JSON syntax**:
@@ -257,7 +257,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 
 1. **List available presets**:
    ```bash
-   npx optimg preset
+   optimg preset
    ```
 
 2. **Check spelling**:
@@ -269,7 +269,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 3. **Use full configuration**:
    ```bash
    # Instead of preset, use individual options
-   npx optimg input.jpg --format webp --quality 90
+   optimg input.jpg --format webp --quality 90
    ```
 
 ## Getting Help
@@ -279,7 +279,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 Enable verbose logging to see detailed information:
 
 ```bash
-npx optimg input.jpg --verbose
+optimg input.jpg --verbose
 ```
 
 ### System Information
@@ -307,9 +307,9 @@ Profile processing performance:
 
 ```bash
 # Time the operation
-time npx optimg ./images --bulk
+time optimg ./images --bulk
 
-# Monitor memory usage
+# Monitor memory usage (one-off)
 npx --node-options="--inspect" optimg ./images --bulk
 ```
 
@@ -384,7 +384,7 @@ Error about unsupported format
 
 # Use shorter paths (Windows path length limitations)
 cd /d C:\short\path
-npx optimg . --bulk
+optimg . --bulk
 
 # Close any image viewers that might lock files
 ```
@@ -419,7 +419,7 @@ If you encounter "EBUSY: resource busy or locked" errors during bulk directory p
    - This is a platform limitation, not a tool limitation
 
 2. **Recommended Workflow**:
-- Process images without deletion (`npx optimg ./images --bulk`)
+- Process images without deletion (`optimg ./images --bulk`)
    - Manually clean up original files when they are not in use
    - Use the tool primarily for optimization without automated deletion
 

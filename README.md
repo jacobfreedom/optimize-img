@@ -208,14 +208,13 @@ optimg ./photos --bulk --strip-metadata
 
 ## 📚 Further Docs
 
-- Examples → `docs/EXAMPLES.md`
-- Troubleshooting → `docs/TROUBLESHOOTING.md`
-- Configuration & Programmatic Usage → `docs/PROGRAMMATIC_USAGE.md`
-- Test Results → `docs/TEST_RESULTS.md`
+- Examples → [docs/EXAMPLES.md](./docs/EXAMPLES.md)
+- Troubleshooting → [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)
+- Configuration & Programmatic Usage → [docs/PROGRAMMATIC_USAGE.md](./docs/PROGRAMMATIC_USAGE.md)
+- Test Results → [docs/TEST_RESULTS.md](./docs/TEST_RESULTS.md)
 
 ## 🤝 Contributing & License
 
 - License: MIT → `LICENSE`
 - Issues: https://github.com/jacobfreedom/optimg-cli/issues
 - Discussions: https://github.com/jacobfreedom/optimg-cli/discussions
-

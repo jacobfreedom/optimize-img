@@ -12,7 +12,7 @@ This document summarizes recent CLI runs against `test-imgs/` using different pr
 
 ### 1) Bulk on `test1` with `--preset balanced`
 
-- Command: `node bin/cli.js ./test-imgs/test1 --bulk --preset balanced --yes`
+- Command: `optimg ./test-imgs/test1 --bulk --preset balanced --yes`
 - Files processed: 7
 - Overall reduction: 39.2% (21.96MB → 13.35MB)
 - Average size reduction: 39.4%
@@ -21,7 +21,7 @@ This document summarizes recent CLI runs against `test-imgs/` using different pr
 
 ### 2) Bulk on `test1` with `--preset performant`
 
-- Command: `node bin/cli.js ./test-imgs/test1 --bulk --preset performant --yes`
+- Command: `optimg ./test-imgs/test1 --bulk --preset performant --yes`
 - Files processed: 7
 - Overall reduction: 39.2% (21.96MB → 13.35MB)
 - Average size reduction: 39.4%
@@ -43,7 +43,7 @@ Note: For this dataset, `balanced` and `performant` produced identical aggregate
 
 ### 3) Bulk on `test1` with `--format avif --quality 80`
 
-- Command: `node bin/cli.js ./test-imgs/test1 --bulk --format avif --quality 80 --yes`
+- Command: `optimg ./test-imgs/test1 --bulk --format avif --quality 80 --yes`
 - Files processed: 7
 - Overall reduction: 2.2% (21.96MB → 21.49MB)
 - Average size reduction: 0.2%
@@ -55,7 +55,7 @@ Note: For this dataset, `balanced` and `performant` produced identical aggregate
 
 ### 4) Bulk-Inplace on `test2` with `--preset balanced`
 
-- Command: `node bin/cli.js ./test-imgs/test2 --bulk-inplace --preset balanced --yes`
+- Command: `optimg ./test-imgs/test2 --bulk-inplace --preset balanced --yes`
 - Files processed: 21
 - Overall reduction: 39.2% (65.88MB → 40.05MB)
 - Average size reduction: 39.4%
@@ -72,11 +72,11 @@ Note: For this dataset, `balanced` and `performant` produced identical aggregate
 
 ## Reproduce Locally
 
-Run with `npx`:
+Run locally:
 
 ```bash
-npx optimg ./test-imgs/test1 --bulk --preset balanced --yes
-npx optimg ./test-imgs/test1 --bulk --preset performant --yes
-npx optimg ./test-imgs/test1 --bulk --format avif --quality 80 --yes
-npx optimg ./test-imgs/test2 --bulk-inplace --preset balanced --yes
+optimg ./test-imgs/test1 --bulk --preset balanced --yes
+optimg ./test-imgs/test1 --bulk --preset performant --yes
+optimg ./test-imgs/test1 --bulk --format avif --quality 80 --yes
+optimg ./test-imgs/test2 --bulk-inplace --preset balanced --yes
 ```

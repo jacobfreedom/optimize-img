@@ -85,7 +85,7 @@ module.exports = {
 
 ## ⚠️ Platform-Specific Considerations
 
-### Windows File System Limitations
+#### Windows File System Limitations
 
 When using optimg programmatically on **Windows systems**, be aware of the following limitations:
 

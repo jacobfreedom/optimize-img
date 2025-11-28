@@ -26,8 +26,8 @@ const optimizer = new ImageOptimizer(options);
 |--------|------|---------|-------------|
 | `format` | string | 'webp' | Output format (webp, jpeg, png, avif) |
 | `quality` | number | 80 | Quality setting (0-100) |
-| `stripMetadata` | boolean | false | Strip image metadata (preserved by default) |
-| `keepOriginals` | boolean | false | Keep original files after processing |
+| `stripMetadata` | boolean | false | Strip image metadata (default: preserved) |
+| `keepOriginals` | boolean | true | Keep original files after processing |
 | `width` | number \| null | null | Resize width (maintains aspect ratio) |
 | `height` | number \| null | null | Resize height (maintains aspect ratio) |
 | `parallel` | number | 4 | Number of parallel processes |
@@ -147,7 +147,7 @@ const config = await loadConfig('./my-config.json');
 
 ### Configuration File Formats
 
-#### JSON (.imgoptimizerc)
+#### JSON (.optimgrc)
 
 ```json
 {
@@ -160,7 +160,7 @@ const config = await loadConfig('./my-config.json');
 }
 ```
 
-#### JavaScript (imgoptimize.config.js)
+#### JavaScript (optimg.config.js)
 
 ```javascript
 module.exports = {
@@ -195,7 +195,7 @@ console.log(preset);
 // List all presets
 const presets = listPresets();
 console.log(presets);
-// ['default', 'balanced', 'quality', 'size']
+// ['default', 'balanced', 'quality', 'performant']
 ```
 
 ### Custom Presets

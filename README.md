@@ -20,6 +20,7 @@ npx optimg ./images --bulk --preset balanced --yes
 - Fast, parallel processing via Sharp
 - Bulk processing for folders and subfolders
 - Presets and config for repeatable workflows
+- This tool was initally built for high quality itterative 3D workflows for sensitive materials like fabric
 
 ## 📦 Installation
 

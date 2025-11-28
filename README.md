@@ -6,82 +6,93 @@
 High-performance image optimization CLI built on Sharp. Great for web assets and real-time 3D texture workflows. Safe by default — keeps originals unless explicitly asked not to.
 
 ## TL;DR
-
-- Quick try (no install):
+- Quick try:
   - `npx optimg ./images --bulk --preset balanced --yes`
-- Recommended (global install):
+- Recommended (global):
   - `npm install -g optimg-cli`
   - `optimg ./images --bulk --preset balanced --yes`
 
+You can replace `optimg` with `npx optimg` if you don’t want a global install.
+
 ## Why optimg?
 - Fast: Sharp-based pipeline with parallel processing.
-- Formats: WebP, JPEG, PNG, AVIF output; broad input support.
-- Presets: Default, balanced, quality, performant — sensible profiles for common needs.
-- Safe: Originals kept unless `--delete-originals` is used.
-- 3D-friendly: Built for iterative texture workflows, ratio-based resizing, and pre-processing before KTX2/BCn.
+- Formats: Broad input support; outputs WebP, JPEG, PNG, AVIF.
+- Presets: `default`, `balanced`, `quality`, `performant`.
+- Safe defaults: Originals kept; metadata preserved by default.
+- 3D-friendly: Ratio-based resizing and iterative texture workflows.
 
 ## Installation
 
 ### Global (recommended)
-- `npm install -g optimg-cli`
+- Install:
+  - `npm install -g optimg-cli`
 - Verify:
   - `optimg --version`
   - `optimg --help`
   - `optimg formats`
-- If permissions fail (macOS/Linux):
-  - `npm config set prefix ~/.npm-global`
-  - `export PATH=~/.npm-global/bin:$PATH` (add to `.bashrc`/`.zshrc`)
-  - `npm install -g optimg-cli`
+- macOS/Linux (permissions):
+  - If `npm -g` fails:
+    - `npm config set prefix ~/.npm-global`
+    - `export PATH=~/.npm-global/bin:$PATH` (add to shell rc)
+    - `npm install -g optimg-cli`
 
-### npx (one-off and CI)
+### npx (one-off / CI)
 - `npx optimg ./images --bulk --preset balanced --yes`
-- Use when avoiding global install or for ephemeral environments.
+- Use for quick trials or ephemeral environments.
 
 ## Quick Start
 
 - Single file:
   - `optimg ./photo.jpg --format webp --quality 80`
-  - Note: `npx optimg ...` also works if not installed globally.
+
 - Bulk (separate folder):
   - `optimg ./assets --bulk --preset balanced --yes`
-  - Creates `./assets/optimized/` (or `optimized1/`, `optimized2/` if needed).
+  - Preserves directory structure under `./assets/optimized/` (auto-increments if needed).
+
 - Bulk in-place:
   - `optimg ./assets --bulk-inplace --preset balanced --yes`
-  - Writes outputs next to originals with `-optimized` suffix.
+  - Writes outputs next to originals with `-optimized` suffix unless `--delete-originals` is used.
+
+Note: You can replace `optimg` with `npx optimg` if you don’t want a global install.
 
 ## Key Concepts
 
 - Supported formats
-  - Input: JPEG, PNG, WebP, GIF, TIFF, SVG, HEIC, AVIF
-  - Output: WebP, JPEG, PNG, AVIF
+  - Input: `jpeg`, `jpg`, `png`, `webp`, `gif`, `tiff`, `svg`, `heic`, `avif`
+  - Output: `webp`, `jpeg`, `jpg`, `png`, `avif`
+
 - Presets
-  - | Preset      | Quality | Use Case                           |
-    |------------|---------|------------------------------------|
-    | default    | 80      | General-purpose                    |
-    | balanced   | 75      | Web assets, balance of size/quality|
-    | quality    | 90      | Photography, higher fidelity       |
-    | performant | 60      | Maximum reduction for performance  |
+
+  | Preset      | Quality | Use case                             |
+  |-------------|---------|--------------------------------------|
+  | default     | 80      | General-purpose                      |
+  | balanced    | 75      | Web assets, size/quality balance     |
+  | quality     | 90      | Photography, higher fidelity         |
+  | performant  | 60      | Bandwidth-sensitive / thumbnails     |
+
 - Resize options
-  - `--width`, `--height`: dimension-based (preserves aspect unless both given).
-  - `--resize`: ratio (`0.5`, `1/2`, etc.).
-  - `--percent`: percentage (`50` → 50%).
-- Metadata behavior
-  - Default: Preserve EXIF/ICC (`stripMetadata: false`).
-  - Remove with `--strip-metadata` or config.
-- Lossless behavior
+  - `--width`, `--height`: dimension-based; preserves aspect unless both provided.
+  - `--resize`: ratio (e.g., `0.5`, `1/2`).
+  - `--percent`: percentage (e.g., `50` → 50%).
+
+- Metadata
+  - Default: Preserve EXIF/ICC metadata.
+  - Remove with `--strip-metadata` (or via config).
+
+- Lossless (canonical)
   - WebP/AVIF default to `lossless: true`.
-  - Use `--no-lossless` to allow lossy compression where size reduction matters.
-  - JPEG is always lossy; PNG is lossless.
+  - Turn off with `--no-lossless`.
+  - `--loseless` is an alias for `--lossless`.
+  - JPEG is lossy by format; PNG is lossless.
 
 ## Bulk Modes
 
-- Mode 1: Separate folder (`--bulk`)
+- Separate folder (`--bulk`)
   - Behavior:
-    - Recursively scans input directory.
-    - Preserves directory structure in `optimized/` folder.
-    - Guard behavior:
-      - Skips files already under `optimized*`.
-      - Auto-increments output folder name: `optimized`, `optimized1`, `optimized2`, …
+    - Recursively scans the input directory.
+    - Preserves directory structure under `optimized/`.
+    - Skips files under existing `optimized*` directories.
+    - Auto-increments output folder name when needed (`optimized`, `optimized1`, `optimized2`, …).
   - Example (before → after):
     ```txt
     assets/
@@ -96,14 +107,14 @@ High-performance image optimization CLI built on Sharp. Great for web assets and
       textures/
         character.webp
     ```
-  - Notes:
-    - Confirmation prompt by default; use `--yes` in scripts/CI.
-    - Originals are untouched unless `--delete-originals` is explicitly set.
+  - Safe defaults:
+    - Confirmation prompt unless `--yes` is provided.
+    - Originals not modified unless `--delete-originals` is explicitly used.
 
-- Mode 2: In-place (`--bulk-inplace`)
+- In-place (`--bulk-inplace`)
   - Behavior:
     - Writes outputs next to originals.
-    - Uses `-optimized` suffix unless `--delete-originals` is set.
+    - Adds `-optimized` suffix unless `--delete-originals` is set.
   - Examples:
     ```txt
     images/
@@ -128,79 +139,76 @@ High-performance image optimization CLI built on Sharp. Great for web assets and
         sample-optimized.webp
         sample.jpg
     ```
-  - Platform behavior:
-    - `--delete-originals` replaces originals with new outputs (not supported on Windows).
-  - Recommended flags:
+  - Suggested flags:
     - Lossy WebP: `--no-lossless --quality 80`
-    - Safe runs: `--yes` to skip prompts in CI.
+    - Non-interactive runs: `--yes` for scripts/CI.
 
-## CLI Reference
+## CLI Reference (condensed)
 
 - Input/Output
-  - `optimg <input>`: file or directory
-  - `-o, --output <path>`: output file/dir
+  - `optimg <input>` (file or directory)
+  - `-o, --output <path>`
+
 - Format/Quality
   - `--format <webp|jpeg|png|avif>`
-  - `--quality <0-100>` (WebP/JPEG)
+  - `--quality <0-100>`
   - `--lossless` (default enabled for WebP/AVIF)
-  - `--no-lossless` (disable lossless)
+  - `--no-lossless`
+  - `--loseless` (alias for `--lossless`)
+
 - Resize
   - `--width <px>`, `--height <px>`
-  - `--resize <ratio>` (e.g., `0.5`, `1/2`)
-  - `--percent <number>` (e.g., `50`)
+  - `--resize <ratio>`
+  - `--percent <number>`
+
 - Presets
   - `--preset <default|balanced|quality|performant>`
-  - `optimg preset` lists available presets.
+  - `optimg preset` shows available presets.
+
 - Bulk/Parallel
-  - `--bulk` (separate folder)
-  - `--bulk-inplace` (next to originals)
+  - `--bulk`, `--bulk-inplace`
   - `--parallel <number>` (default: 4)
   - `--yes` (skip prompts)
+
 - Metadata & Config
   - `--strip-metadata` (default: preserved)
-  - `--keep-metadata` (explicit preserve)
   - `--config <path>`
+
 - Diagnostics
-  - `--verbose` (debug output)
+  - `--verbose`
   - `optimg formats` (supported formats)
 
 ## Real-time 3D / Engine Workflows
 
-- Ratio-based downscale:
+- Ratio downscale:
   - `optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90`
   - `optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80`
   - `optimg ./textures/final --bulk --resize 1/2 --preset performant`
-- Practical tips:
-  - Downscale BaseColor/ORM to a target resolution, keep Normal maps higher quality.
-  - Use WebP for load-time wins, PNG where lossless technical maps are preferred.
+- Tips:
+  - Downscale BaseColor/ORM to target resolution; keep Normal maps higher quality.
+  - Use WebP for load-time gains; PNG for lossless technical maps as needed.
 - Scope:
   - optimg is a fast pre-processing / lookdev step.
-  - It does not replace engine-specific pipelines like KTX2/BCn.
-  - Inspired by effective texture workflows common in glTF toolchains.
+  - Not a replacement for KTX2/BCn pipelines.
 
 ## Platform Notes
 
 - Windows:
-  - `--delete-originals` is disabled / not supported due to file locking and reliability concerns.
-  - Safe workflow: bulk optimize → manually delete originals when satisfied.
+  - `--delete-originals` is not supported / unreliable due to file locking.
+  - Recommended workflow: bulk optimize, then manually delete originals when satisfied.
 - Linux/macOS:
   - Normal behavior with proper permissions.
 
 ## Further Docs
-
 - Examples & Recipes → `docs/EXAMPLES.md`
 - Troubleshooting → `docs/TROUBLESHOOTING.md`
 - Programmatic Usage → `docs/PROGRAMMATIC_USAGE.md`
 - Test Results → `docs/TEST_RESULTS.md`
 
 ## Contributing
-
-- PRs welcome. Please include tests and update docs where applicable.
-- Run tests locally:
-  - `npm test`
-- Lint:
-  - `npm run lint`
+- PRs welcome; include tests and update docs where applicable.
+- Tests: `npm test`
+- Lint: `npm run lint`
 
 ## License
-
 MIT

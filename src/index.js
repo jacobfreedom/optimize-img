@@ -106,10 +106,11 @@ class ImageOptimizer {
 
     console.log(chalk.blue(`Found ${files.length} image files to process`))
 
-    // Determine a single output directory for this bulk run unless a custom output was provided
+    // Determine a single output directory for this bulk run unless in-place mode or a custom output was provided
     let bulkOutputDir = null
     const hasCustomOutput = !!this.options.output
-    if (!hasCustomOutput) {
+    const inPlace = !!this.options.bulkInplace
+    if (!hasCustomOutput && !inPlace) {
       bulkOutputDir = await this.resolveOptimizedDir(dirPath)
       try {
         await fs.ensureDir(bulkOutputDir)
@@ -141,13 +142,13 @@ class ImageOptimizer {
     const promises = files.map(filePath =>
       limit(async () => {
         try {
-          // For bulk operations, ensure a single output directory per run
+          // For bulk operations, ensure a single output directory per run when not in-place
           const originalOutput = this.options.output
-          if (bulkOutputDir && !hasCustomOutput) {
+          if (bulkOutputDir && !hasCustomOutput && !inPlace) {
             this.options.output = bulkOutputDir + path.sep
           }
           await this.processFile(filePath, true)
-          if (!hasCustomOutput) {
+          if (!hasCustomOutput && !inPlace) {
             this.options.output = originalOutput
           }
           this.progressBar.increment()

@@ -210,8 +210,9 @@ npx optimg <input> -o <output>     # Custom output path
 # Format & Quality
 npx optimg <input> --format webp   # Output format (webp, jpeg, png, avif)
 npx optimg <input> --quality 85    # Quality (0-100, default: 80)
-npx optimg <input> --lossless      # Use lossless compression when supported
+npx optimg <input> --lossless      # Use lossless compression (default: enabled)
 npx optimg <input> --loseless      # Alias for --lossless
+npx optimg <input> --no-lossless   # Disable lossless compression
 
 # Resizing
 npx optimg <input> --width 800    # Resize width
@@ -231,7 +232,7 @@ npx optimg <directory> --bulk          # Process entire directory recursively
 npx optimg <directory> --bulk --parallel 8  # Parallel processing
 ```bash
 # Metadata & File Operations
-npx optimg <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
+npx optimg <input> --strip-metadata     # Remove EXIF/ICC metadata (default: preserved)
 npx optimg <input> --delete-originals  # Delete original files after optimization
 ```bash
 # Configuration
@@ -241,7 +242,7 @@ npx optimg <input> --yes              # Skip confirmation prompts
 
 ### Lossless Compression
 
-By default, lossless compression is enabled (`lossless: true`).
+By default, lossless compression is enabled (`lossless: true`). Disable with `--no-lossless`.
 
 Disable it when you prefer smaller outputs over exact preservation:
 
@@ -290,6 +291,7 @@ Two modes for bulk processing:
     ```bash
     npx optimg ./images --bulk-inplace --yes
     ```
+  - Note: Files are created within the same folder as originals (e.g. `image-optimized.webp`).
 
 Error handling:
 - Permission errors provide clear messages and suggestions.
@@ -545,3 +547,17 @@ npx optimg ./images --bulk --preset balanced
 ```
 
 If it looks good, wire it into your build/CI and forget about it.
+### Global (npm -g)
+
+```bash
+npm install -g optimg-cli
+optimg --help
+```
+
+After global install, use `optimg` directly from any directory:
+
+```bash
+optimg ./images --bulk --preset balanced --yes
+optimg ./photo.jpg --format webp --quality 80
+optimg ./images --bulk-inplace --preset balanced --yes
+```

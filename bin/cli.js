@@ -23,7 +23,7 @@ program
   .option('-r, --resize <value>', 'Resize by ratio (e.g., 0.5 for 50%, 1/2 for half size)')
   .option('-p, --percent <number>', 'Resize by percentage (e.g., 50 for 50%)')
   .option('--preset <preset>', 'Optimization preset (default, balanced, quality, performant)', 'default')
-  .option('--keep-metadata', 'Preserve EXIF/ICC metadata (default: metadata is stripped)')
+  .option('--keep-metadata', 'Preserve EXIF/ICC metadata (default: metadata is preserved)')
   .option('--delete-originals', 'Delete original files after optimization (use with caution)')
   .option('--bulk', 'Process entire directory (creates optimized folder)')
   .option('--bulk-inplace', 'Process entire directory in-place (outputs next to originals)')
@@ -33,6 +33,7 @@ program
   .option('--yes', 'Skip confirmation prompts (use with caution)')
   .option('--lossless', 'Use lossless compression when supported')
   .option('--loseless', 'Alias for --lossless')
+  .option('--no-lossless', 'Disable lossless compression')
   .action(async (input, options) => {
     try {
       if (!input) {
@@ -104,7 +105,8 @@ program
         bulkInplace: rawArgs.some(arg => arg === '--bulk-inplace'),
         parallel: rawArgs.some(arg => arg === '--parallel'),
         verbose: rawArgs.some(arg => arg === '--verbose'),
-        lossless: rawArgs.some(arg => arg === '--lossless' || arg === '--loseless')
+        lossless: rawArgs.some(arg => arg === '--lossless' || arg === '--loseless'),
+        noLossless: rawArgs.some(arg => arg === '--no-lossless')
       }
 
       // Merge config with CLI options, prioritizing explicitly provided CLI options
@@ -127,7 +129,8 @@ program
       if (explicitOptions.deleteOriginals) finalOptions.deleteOriginals = true
       if (explicitOptions.bulk) finalOptions.bulk = true
       if (explicitOptions.parallel) finalOptions.parallel = parseInt(options.parallel)
-      if (explicitOptions.lossless) finalOptions.lossless = true
+      if (explicitOptions.noLossless) finalOptions.lossless = false
+      else if (explicitOptions.lossless) finalOptions.lossless = true
       if (explicitOptions.bulkInplace) finalOptions.bulkInplace = true
 
       const optimizer = new ImageOptimizer(finalOptions)

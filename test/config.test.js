@@ -215,7 +215,7 @@ describe('Configuration', () => {
       expect(DEFAULT_CONFIG).toEqual({
         format: 'webp',
         quality: 80,
-        stripMetadata: true,
+        stripMetadata: false,
         keepOriginals: true,
         parallel: 4,
         verbose: false,

@@ -8,6 +8,86 @@ A high-performance image optimization CLI for developers with modern format supp
 
 ---
 
+### Bulk In-Place Details (`--bulk-inplace`)
+
+Overview:
+- Processes directories recursively and writes outputs next to originals.
+- Maintains original folder structure without creating `optimized*` directories.
+- Uses `-optimized` filename suffix unless `--delete-originals` is set.
+
+File structure requirements:
+- Input directory can contain nested subdirectories.
+- Supported inputs: `jpeg`, `jpg`, `png`, `webp`, `gif`, `tiff`, `svg`, `heic`, `avif`.
+- Supported outputs: `webp`, `jpeg`, `jpg`, `png`, `avif`.
+- Naming: output names match input base name, with `-optimized` suffix when originals are kept.
+- Permissions: requires read access to inputs and write access to their parent directories.
+
+Directory layout examples:
+- Simple case (before → after):
+
+```txt
+images/
+  hero.jpg
+
+images/
+  hero-optimized.webp   # after: next to original
+  hero.jpg              # original preserved
+```
+
+- Nested case (before → after):
+
+```txt
+assets/
+  ui/
+    icon.png
+  photos/
+    sample.jpg
+
+assets/
+  ui/
+    icon-optimized.webp     # after: same folder
+    icon.png
+  photos/
+    sample-optimized.webp   # after: same folder
+    sample.jpg
+```
+
+Technical specifications:
+- Output path selection:
+  - In-place with originals kept: `name-optimized.<ext>` (`src/index.js:397–404`).
+  - In-place with `--delete-originals`: `name.<ext>` replaces original (`src/index.js:399–401`).
+- Overwrite rules:
+  - Existing outputs are skipped with a warning (`src/index.js:180–185`).
+  - Originals deleted only when requested and supported (not on Windows).
+- Encoding:
+  - WebP/AVIF support `lossless` when enabled (`src/index.js:442–451`).
+  - PNG is lossless; JPEG uses MozJPEG (`src/index.js:444–449`).
+- Performance:
+  - Parallel processing controlled by `--parallel` (default: 4).
+  - Large trees benefit from higher parallelism; adjust to CPU/I/O.
+
+Error handling:
+- Input path missing → “Input path does not exist” (`src/index.js:67–88`).
+  - Fix: verify path; use absolute paths when needed.
+- Permission denied (`EACCES`, `EPERM`) creating/writing output (`src/index.js:115–123`, `src/index.js:203–208`).
+  - Fix: write to a directory you own; avoid protected system paths.
+- Low disk space (`ENOSPC`) (`src/index.js:120–122`, `src/index.js:209–212`).
+  - Fix: free space or choose a different output.
+- Windows deletion limitations.
+  - Fix: avoid `--delete-originals` on Windows; delete manually later.
+
+Examples:
+```bash
+# In-place, keep originals (adds -optimized suffix)
+optimg ./assets --bulk-inplace --preset balanced --yes
+
+# In-place, replace originals (not supported on Windows)
+optimg ./assets --bulk-inplace --delete-originals --format webp --quality 80 --yes
+
+# In-place with lossy WebP
+optimg ./assets --bulk-inplace --format webp --no-lossless --quality 80 --yes
+```
+
 ## ⚡ TL;DR
 
 ```bash
@@ -334,6 +414,37 @@ What `--bulk` does:
 1. Recursively scans a directory
 2. Preserves directory structure in the output
 3. Never touches originals unless you explicitly opt in
+
+### Global Installation (Primary Usage)
+
+Global installation provides the fastest, most convenient workflow for repeated and batch operations. It makes the `optimg` command available system-wide and integrates cleanly into scripts and CI/CD.
+
+Benefits:
+- One-time setup; `optimg` available in PATH everywhere
+- Better performance with repeated runs than spawning `npx`
+- Easier automation with predictable environment and caching
+
+Install steps by platform:
+- macOS/Linux (default prefix):
+  - `npm install -g optimg-cli`
+  - Verify: `optimg --version` and `optimg --help`
+  - If permissions fail:
+    - `npm config set prefix ~/.npm-global`
+    - `export PATH=~/.npm-global/bin:$PATH` (add to shell rc)
+    - `npm install -g optimg-cli`
+- Windows:
+  - Use an elevated terminal if required
+  - `npm install -g optimg-cli`
+  - Verify: `optimg --version` and `optimg --help`
+  - WSL recommended for large bulk operations
+
+Verification commands:
+- `which optimg` (macOS/Linux) or `where optimg` (Windows)
+- `optimg preset` and `optimg formats`
+
+Global vs `npx` usage:
+- Prefer global install for frequent use, automation, and CI/CD
+- Use `npx` for quick one-off invocations or where global state is undesirable
 
 Example folder result:
 

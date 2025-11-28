@@ -502,3 +502,53 @@ optimg ./images --bulk             # → ./images/optimized2/
 ```
 
 If permission or disk space errors occur, check directory write permissions and free disk space. The CLI will surface clear messages.
+### Bulk In-Place Errors and Solutions
+
+#### "Permission denied" writing outputs next to originals
+
+**Problem**: In-place mode cannot write `*-optimized.*` files due to directory permissions.
+
+**Solutions**:
+
+```bash
+# Write to a directory you own
+cd ~/project && optimg ./images --bulk-inplace --yes
+
+# Or use a custom output directory (not in-place)
+optimg ./images --bulk --output ./optimized --yes
+```
+
+#### "Not enough disk space" (`ENOSPC`) during in-place
+
+**Problem**: Disk is full when writing outputs next to originals.
+
+**Solutions**:
+
+```bash
+# Free space or choose a different volume
+du -sh ./images
+optimg ./images --bulk --output /Volumes/fast/optimized --yes
+```
+
+#### Windows: originals cannot be deleted reliably
+
+**Problem**: `--delete-originals` is not supported on Windows due to file locks.
+
+**Solutions**:
+
+```bash
+# Keep originals and delete manually later
+optimg ./images --bulk-inplace --yes
+```
+
+#### Existing outputs skipped
+
+**Problem**: In-place mode finds existing `-optimized` files and skips them.
+
+**Solutions**:
+
+```bash
+# Remove previous outputs or write to a fresh directory
+find ./images -name "*-optimized.*" -delete
+optimg ./images --bulk-inplace --yes
+```

@@ -91,7 +91,13 @@ class ImageOptimizer {
     this.log(`Processing directory: ${dirPath}`, 'info')
 
     const pattern = path.join(dirPath, '**/*.{jpg,jpeg,png,webp,gif,tiff,svg,heic,avif}')
-    const files = await glob.glob(pattern, { caseSensitiveMatch: false })
+    const files = await glob.glob(pattern, {
+      caseSensitiveMatch: false,
+      ignore: [
+        path.join(dirPath, '**/optimized/**'),
+        path.join(dirPath, '**/optimized*/**')
+      ]
+    })
 
     if (files.length === 0) {
       console.log(chalk.yellow('No supported image files found in directory'))
@@ -99,6 +105,24 @@ class ImageOptimizer {
     }
 
     console.log(chalk.blue(`Found ${files.length} image files to process`))
+
+    // Determine a single output directory for this bulk run unless a custom output was provided
+    let bulkOutputDir = null
+    const hasCustomOutput = !!this.options.output
+    if (!hasCustomOutput) {
+      bulkOutputDir = await this.resolveOptimizedDir(dirPath)
+      try {
+        await fs.ensureDir(bulkOutputDir)
+      } catch (dirErr) {
+        if (dirErr && (dirErr.code === 'EACCES' || dirErr.code === 'EPERM')) {
+          throw new Error(`Permission denied creating output directory: ${bulkOutputDir}. Try a different output path or adjust permissions.`)
+        }
+        if (dirErr && dirErr.code === 'ENOSPC') {
+          throw new Error('Not enough disk space to create output directory')
+        }
+        throw dirErr
+      }
+    }
 
     this.progressBar = new cliProgress.SingleBar({
       format: 'Progress |{bar}| {percentage}% | {value}/{total} Files | ETA: {eta}s',
@@ -114,8 +138,15 @@ class ImageOptimizer {
     const promises = files.map(filePath =>
       limit(async () => {
         try {
-          // Process each file with bulk mode enabled for consistent naming
+          // For bulk operations, ensure a single output directory per run
+          const originalOutput = this.options.output
+          if (bulkOutputDir && !hasCustomOutput) {
+            this.options.output = bulkOutputDir + path.sep
+          }
           await this.processFile(filePath, true)
+          if (!hasCustomOutput) {
+            this.options.output = originalOutput
+          }
           this.progressBar.increment()
         } catch (error) {
           this.log(`Error processing ${filePath}: ${error.message}`, 'error')
@@ -165,8 +196,18 @@ class ImageOptimizer {
         startTime: Date.now()
       }
 
-      // Ensure output directory exists
-      await fs.ensureDir(path.dirname(outputPath))
+      // Ensure output directory exists (guard permission and ENOSPC errors)
+      try {
+        await fs.ensureDir(path.dirname(outputPath))
+      } catch (dirErr) {
+        if (dirErr && (dirErr.code === 'EACCES' || dirErr.code === 'EPERM')) {
+          throw new Error(`Permission denied creating output directory: ${path.dirname(outputPath)}. Try a different output path or adjust permissions.`)
+        }
+        if (dirErr && dirErr.code === 'ENOSPC') {
+          throw new Error('Not enough disk space to create output directory')
+        }
+        throw dirErr
+      }
 
       // Process image with Windows file lock prevention
       if (process.platform === 'win32') {
@@ -249,7 +290,17 @@ class ImageOptimizer {
       const outputBuffer = await sharpInstance.toFormat(validatedFormat, formatOptions).toBuffer()
 
       // Write output file using standard fs operations
-      await fs.writeFile(outputPath, outputBuffer)
+      try {
+        await fs.writeFile(outputPath, outputBuffer)
+      } catch (writeErr) {
+        if (writeErr && (writeErr.code === 'EACCES' || writeErr.code === 'EPERM')) {
+          throw new Error(`Permission denied writing output file: ${outputPath}`)
+        }
+        if (writeErr && writeErr.code === 'ENOSPC') {
+          throw new Error('Not enough disk space to write output file')
+        }
+        throw writeErr
+      }
 
       // Get new file size
       const newSize = (await fs.stat(outputPath)).size
@@ -335,9 +386,9 @@ class ImageOptimizer {
     const inputDir = path.dirname(inputPath)
     const inputName = path.basename(inputPath, path.extname(inputPath))
 
-    // For bulk operations, create an optimized folder
+    // For bulk operations, create an optimized folder with guard naming
     if (bulk) {
-      const optimizedDir = path.join(inputDir, 'optimized')
+      const optimizedDir = await this.resolveOptimizedDir(inputDir)
       await fs.ensureDir(optimizedDir)
       return path.join(optimizedDir, `${inputName}.${format}`)
     }
@@ -349,6 +400,31 @@ class ImageOptimizer {
 
     // Add suffix to preserve original
     return path.join(inputDir, `${inputName}-optimized.${format}`)
+  }
+
+  async resolveOptimizedDir(baseDir) {
+    // If we are already inside an optimized* directory, place outputs in the next sibling under the parent
+    const baseName = path.basename(baseDir)
+    let targetRoot = baseDir
+    let parentDir = path.dirname(baseDir)
+    if (/^optimized\d*$/.test(baseName)) {
+      targetRoot = parentDir
+      parentDir = path.dirname(parentDir)
+    }
+
+    // Determine next available optimized directory name
+    const names = ['optimized']
+    for (let i = 1; i <= 100; i++) names.push(`optimized${i}`)
+
+    for (const name of names) {
+      const candidate = path.join(targetRoot, name)
+      // If "optimized" already exists, continue until we find the first non-existing candidate
+      if (!await fs.pathExists(candidate)) {
+        return candidate
+      }
+    }
+    // Fallback: last candidate
+    return path.join(targetRoot, 'optimized100')
   }
 
   getFormatOptions(format, quality) {

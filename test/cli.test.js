@@ -252,9 +252,14 @@ describe('CLI Integration', () => {
     it('should process directory with parallel processing', async () => {
       await runCLI(`${subDir} --bulk --parallel 2`)
 
-      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image0.webp'))).toBe(true)
-      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image1.webp'))).toBe(true)
-      expect(await fs.pathExists(path.join(subDir, 'optimized', 'image2.webp'))).toBe(true)
+      const candidates = Array.from({ length: 10 }, (_, i) => i === 0 ? 'optimized' : `optimized${i}`).map(n => path.join(subDir, n))
+      const hasAll = async dir => (
+        await fs.pathExists(path.join(dir, 'image0.webp')) &&
+        await fs.pathExists(path.join(dir, 'image1.webp')) &&
+        await fs.pathExists(path.join(dir, 'image2.webp'))
+      )
+      const ok = (await Promise.all(candidates.map(hasAll))).some(Boolean)
+      expect(ok).toBe(true)
     })
 
     it('should handle bulk processing with multiple files and parallel operations (regression test)', async () => {
@@ -278,9 +283,15 @@ describe('CLI Integration', () => {
 
       await runCLI(`${subDir} --bulk --parallel 4`)
 
-      for (let i = 0; i < 10; i++) {
-        expect(await fs.pathExists(path.join(subDir, 'optimized', `image${i}.webp`))).toBe(true)
+      const candidates = Array.from({ length: 10 }, (_, i) => i === 0 ? 'optimized' : `optimized${i}`).map(n => path.join(subDir, n))
+      const hasAll = async dir => {
+        for (let i = 0; i < 10; i++) {
+          if (!await fs.pathExists(path.join(dir, `image${i}.webp`))) return false
+        }
+        return true
       }
+      const ok = (await Promise.all(candidates.map(hasAll))).some(Boolean)
+      expect(ok).toBe(true)
     })
   })
 

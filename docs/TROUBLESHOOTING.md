@@ -487,3 +487,18 @@ apk add --no-cache gcc g++ make libc6-compat
 - **Discussions**: Ask questions and share experiences
 - **Wiki**: Community-maintained documentation
 - **Stack Overflow**: Tag questions with `optimize-img`
+## Nested optimized folders
+
+If you see `optimized/optimized/...` structures from previous runs:
+
+- Use the new guard behavior: bulk mode now skips any `optimized*` directories
+- Subsequent runs place outputs into `optimized1`, then `optimized2`, etc.
+
+Example:
+```bash
+optimg ./images --bulk             # → ./images/optimized/
+optimg ./images --bulk             # → ./images/optimized1/
+optimg ./images --bulk             # → ./images/optimized2/
+```
+
+If permission or disk space errors occur, check directory write permissions and free disk space. The CLI will surface clear messages.

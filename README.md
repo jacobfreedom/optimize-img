@@ -272,6 +272,34 @@ Notes:
 - JPEG does not support true lossless via quality settings; use PNG/WebP/AVIF when you need lossless.
 ```
 
+### Guard: Optimized Folder Naming & Skipping
+
+By default, bulk operations avoid re-processing previously optimized images and auto-select a safe output folder name.
+
+Behavior:
+- Skips any input files under directories named `optimized`, `optimized1`, `optimized2`, etc.
+- Chooses output folder under each source directory as first available: `optimized` → `optimized1` → `optimized2` …
+- Prevents nested `optimized/optimized/...` structures on repeated runs.
+
+Examples:
+```bash
+# First run: creates ./images/optimized/
+optimg ./images --bulk
+
+# Second run: creates ./images/optimized1/
+optimg ./images --bulk
+
+# Third run: creates ./images/optimized2/
+optimg ./images --bulk
+
+# Show help
+optimg --help
+```
+
+Error handling:
+- Permission errors provide clear messages and suggestions.
+- Low disk space errors surface as `ENOSPC` with guidance to free space.
+
 ### Platform-Specific Notes
 
 - **Windows**: The `--delete-originals` flag is **NOT SUPPORTED** on Windows systems due to fundamental Windows file system locking behavior. Files remain locked and cannot be deleted reliably. Use alternative workflows for Windows environments.

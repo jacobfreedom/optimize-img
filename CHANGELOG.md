@@ -89,3 +89,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-platform testing
 - Security scanning with CodeQL
 - Dependency vulnerability checks
+## 1.1.0 - 2025-11-28
+
+### Added
+- Guard behavior for bulk runs:
+  - Skip processing files under `optimized*` directories
+  - Automatic output folder naming: `optimized` → `optimized1` → `optimized2`
+  - Improved error messages for permission (`EACCES`, `EPERM`) and disk space (`ENOSPC`)
+
+### Changed
+- CLI program name set to `optimg` (kept `optimize-img` alias)
+- Documentation updated to reflect guard behavior and `optimg` command usage

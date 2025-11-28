@@ -1,214 +1,221 @@
 # optimg
+
+High-performance image optimization CLI. Modern formats, bulk directory processing, presets, and safe defaults.
+
 [![npm version](https://img.shields.io/npm/v/optimg-cli.svg)](https://www.npmjs.com/package/optimg-cli)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](#platform-notes)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/badge/GitHub-optimg--cli-181717.svg)](https://github.com/jacobfreedom/optimg-cli)
 
-High-performance image optimization CLI built on Sharp. Great for web assets and real-time 3D texture workflows. Safe by default — keeps originals unless explicitly asked not to.
+## ⚡ TL;DR
 
-## TL;DR
-- Quick try:
-  - `npx optimg ./images --bulk --preset balanced --yes`
-- Recommended (global):
-  - `npm install -g optimg-cli`
-  - `optimg ./images --bulk --preset balanced --yes`
+```bash
+optimg ./images --bulk --preset balanced --yes
+# For one-off runs without global install:
+npx optimg ./images --bulk --preset balanced --yes
+```
 
-You can replace `optimg` with `npx optimg` if you don’t want a global install.
+## 🌟 Why optimg
 
-## Why optimg?
-- Fast: Sharp-based pipeline with parallel processing.
-- Formats: Broad input support; outputs WebP, JPEG, PNG, AVIF.
-- Presets: `default`, `balanced`, `quality`, `performant`.
-- Safe defaults: Originals kept; metadata preserved by default.
-- 3D-friendly: Ratio-based resizing and iterative texture workflows.
+- Quality-first defaults with predictable outputs
+- Fast, parallel processing via Sharp
+- Bulk processing for folders and subfolders
+- Presets and config for repeatable workflows
 
-## Installation
+## 📦 Installation
 
-### Global (recommended)
-- Install:
-  - `npm install -g optimg-cli`
-- Verify:
-  - `optimg --version`
-  - `optimg --help`
-  - `optimg formats`
-- macOS/Linux (permissions):
-  - If `npm -g` fails:
-    - `npm config set prefix ~/.npm-global`
-    - `export PATH=~/.npm-global/bin:$PATH` (add to shell rc)
-    - `npm install -g optimg-cli`
+- Global (primary)
+  ```bash
+  npm install -g optimg-cli
+  optimg --help
+  ```
+  - Verify PATH: `which optimg` (macOS/Linux) or `where optimg` (Windows)
+  - Prefer global for repeated use, CI/CD, and automation
 
-### npx (one-off / CI)
-- `npx optimg ./images --bulk --preset balanced --yes`
-- Use for quick trials or ephemeral environments.
+- Local (project dev dependency)
+  ```bash
+  npm install optimg-cli --save-dev
+  ```
+  Add to `package.json` scripts:
+  ```json
+  {
+    "scripts": {
+      "optimize": "optimg ./images --bulk --preset balanced"
+    }
+  }
+  ```
 
-## Quick Start
+- npx (one-off usage)
+  ```bash
+  npx optimg --help
+  npx optimg ./images --bulk --preset balanced --yes
+  ```
 
-- Single file:
-  - `optimg ./photo.jpg --format webp --quality 80`
+- Requirements
+  - Node.js `>=18.0.0`
+  - Sharp prebuilt binaries (most platforms). If install fails on Linux, see Sharp docs for `libvips`/build tools.
 
-- Bulk (separate folder):
-  - `optimg ./assets --bulk --preset balanced --yes`
-  - Preserves directory structure under `./assets/optimized/` (auto-increments if needed).
+## 🚀 Quick Start
 
-- Bulk in-place:
-  - `optimg ./assets --bulk-inplace --preset balanced --yes`
-  - Writes outputs next to originals with `-optimized` suffix unless `--delete-originals` is used.
+- Single file
+  ```bash
+  optimg photo.jpg                 # WebP by default
+  optimg photo.jpg --quality 90
+  optimg photo.png --width 800 --format jpeg
+  optimg texture.jpg --resize 1/2  # ratio
+  optimg photo.jpg --percent 25    # percentage
+  optimg input.jpg -o output.webp  # explicit output
+  ```
 
-Note: You can replace `optimg` with `npx optimg` if you don’t want a global install.
+- Directory (bulk)
+  ```bash
+  optimg ./images --bulk                         # creates ./optimized*
+  optimg ./assets --bulk --format webp --quality 75 --parallel 8
+  optimg ./images --bulk -o ./optimized/         # custom output root
+  ```
 
-## Key Concepts
+## 🔑 Key Concepts
 
-- Supported formats
-  - Input: `jpeg`, `jpg`, `png`, `webp`, `gif`, `tiff`, `svg`, `heic`, `avif`
-  - Output: `webp`, `jpeg`, `jpg`, `png`, `avif`
+- Defaults
+  - Format: `webp`
+  - Quality: `80`
+  - Lossless: `true` (WebP/AVIF support lossless)
+  - Metadata: preserved (`stripMetadata: false`)
+  - Keep originals: `true`
+  - Parallel: `4`
 
-- Presets
+- Bulk output
+  - `--bulk`: writes into `optimized`, then `optimized1`, `optimized2`, …; skips any `optimized*` inputs
+  - `--bulk-inplace`: writes next to originals; suffix `-optimized` unless `--delete-originals`
 
-  | Preset      | Quality | Use case                             |
-  |-------------|---------|--------------------------------------|
-  | default     | 80      | General-purpose                      |
-  | balanced    | 75      | Web assets, size/quality balance     |
-  | quality     | 90      | Photography, higher fidelity         |
-  | performant  | 60      | Bandwidth-sensitive / thumbnails     |
-
-- Resize options
-  - `--width`, `--height`: dimension-based; preserves aspect unless both provided.
-  - `--resize`: ratio (e.g., `0.5`, `1/2`).
-  - `--percent`: percentage (e.g., `50` → 50%).
-
-- Metadata
-  - Default: Preserve EXIF/ICC metadata.
-  - Remove with `--strip-metadata` (or via config).
-
-- Lossless (canonical)
-  - WebP/AVIF default to `lossless: true`.
-  - Turn off with `--no-lossless`.
-  - `--loseless` is an alias for `--lossless`.
-  - JPEG is lossy by format; PNG is lossless.
-
-## Bulk Modes
+## 🧰 Bulk Modes
 
 - Separate folder (`--bulk`)
-  - Behavior:
-    - Recursively scans the input directory.
-    - Preserves directory structure under `optimized/`.
-    - Skips files under existing `optimized*` directories.
-    - Auto-increments output folder name when needed (`optimized`, `optimized1`, `optimized2`, …).
-  - Example (before → after):
-    ```txt
-    assets/
-      images/
-        hero.jpg
-      textures/
-        character.jpg
-
-    assets/optimized/
-      images/
-        hero.webp
-      textures/
-        character.webp
-    ```
-  - Safe defaults:
-    - Confirmation prompt unless `--yes` is provided.
-    - Originals not modified unless `--delete-originals` is explicitly used.
+  - Preserves directory structure under `optimized*`
+  - Guards against nested `optimized/optimized/...`
+  ```bash
+  optimg ./images --bulk
+  optimg ./images --bulk --yes
+  ```
 
 - In-place (`--bulk-inplace`)
-  - Behavior:
-    - Writes outputs next to originals.
-    - Adds `-optimized` suffix unless `--delete-originals` is set.
-  - Examples:
-    ```txt
-    images/
-      hero.jpg
+  - Outputs next to originals; no `optimized*` directories
+  - Naming
+    - Keep originals: `name-optimized.<ext>`
+    - `--delete-originals`: `name.<ext>` replaces original
+  - Requirements: read access to inputs, write access to parent directories
+  - Supported inputs: `jpeg, jpg, png, webp, gif, tiff, svg, heic, avif`
+  - Supported outputs: `webp, jpeg, jpg, png, avif`
 
-    images/
-      hero-optimized.webp   # after
-      hero.jpg
-    ```
-    ```txt
-    assets/
-      ui/
-        icon.png
-      photos/
-        sample.jpg
+  Before → After (nested folders)
+  ```txt
+  assets/
+    ui/icon.png
+    photos/sample.jpg
 
-    assets/
-      ui/
-        icon-optimized.webp
-        icon.png
-      photos/
-        sample-optimized.webp
-        sample.jpg
-    ```
-  - Suggested flags:
-    - Lossy WebP: `--no-lossless --quality 80`
-    - Non-interactive runs: `--yes` for scripts/CI.
+  assets/
+    ui/icon-optimized.webp
+    ui/icon.png
+    photos/sample-optimized.webp
+    photos/sample.jpg
+  ```
 
-## CLI Reference (condensed)
+  Examples
+  ```bash
+  optimg ./assets --bulk-inplace --preset balanced --yes
+  optimg ./assets --bulk-inplace --delete-originals --format webp --quality 80 --yes   # not on Windows
+  optimg ./assets --bulk-inplace --format webp --no-lossless --quality 80 --yes        # lossy WebP
+  ```
+
+  Error handling
+  - Missing input path → clear error; verify absolute paths
+  - Permission denied (`EACCES`,`EPERM`) → write to a directory you own
+  - Low disk space (`ENOSPC`) → free space or change output location
+  - Windows: avoid `--delete-originals` (not supported)
+
+## 🧾 CLI Reference (condensed)
 
 - Input/Output
-  - `optimg <input>` (file or directory)
-  - `-o, --output <path>`
+  ```bash
+  optimg <input>                 # file or directory
+  optimg <input> -o <output>     # explicit output path/dir
+  ```
 
-- Format/Quality
-  - `--format <webp|jpeg|png|avif>`
-  - `--quality <0-100>`
-  - `--lossless` (default enabled for WebP/AVIF)
-  - `--no-lossless`
-  - `--loseless` (alias for `--lossless`)
+- Format & Quality
+  ```bash
+  optimg <input> --format webp   # webp, jpeg, png, avif
+  optimg <input> --quality 85    # 0–100 (default 80)
+  optimg <input> --lossless      # enable lossless
+  optimg <input> --loseless      # alias
+  optimg <input> --no-lossless   # disable lossless
+  ```
 
-- Resize
-  - `--width <px>`, `--height <px>`
-  - `--resize <ratio>`
-  - `--percent <number>`
+- Resizing
+  ```bash
+  optimg <input> --width 800
+  optimg <input> --height 600
+  optimg <input> --resize 1/2
+  optimg <input> --percent 50
+  ```
 
 - Presets
-  - `--preset <default|balanced|quality|performant>`
-  - `optimg preset` shows available presets.
+  ```bash
+  optimg <input> --preset quality    # default, balanced, quality, performant
+  optimg preset                      # list presets
+  optimg formats                     # list formats
+  ```
 
-- Bulk/Parallel
-  - `--bulk`, `--bulk-inplace`
-  - `--parallel <number>` (default: 4)
-  - `--yes` (skip prompts)
+- Bulk / parallel / config / verbose
+  ```bash
+  optimg <dir> --bulk
+  optimg <dir> --bulk-inplace
+  optimg <dir> --bulk --parallel 8
+  optimg <input> --strip-metadata
+  optimg <input> --config ./config.json
+  optimg <input> --verbose
+  optimg <input> --yes
+  ```
 
-- Metadata & Config
-  - `--strip-metadata` (default: preserved)
-  - `--config <path>`
+## 🎮 Real-time 3D Workflows
 
-- Diagnostics
-  - `--verbose`
-  - `optimg formats` (supported formats)
+- Use ratios (`1/2`, `1/4`) to keep texture sets consistent (4K→2K→1K)
+- Generate a couple of variants (balanced vs performant), test in-engine under real lights
+- Keep originals unless you explicitly use `--delete-originals`
 
-## Real-time 3D / Engine Workflows
+```bash
+optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90
+optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80
+optimg ./textures/final --bulk --resize 1/2 --preset performant
+```
 
-- Ratio downscale:
-  - `optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90`
-  - `optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80`
-  - `optimg ./textures/final --bulk --resize 1/2 --preset performant`
-- Tips:
-  - Downscale BaseColor/ORM to target resolution; keep Normal maps higher quality.
-  - Use WebP for load-time gains; PNG for lossless technical maps as needed.
-- Scope:
-  - optimg is a fast pre-processing / lookdev step.
-  - Not a replacement for KTX2/BCn pipelines.
+## 🧾 Metadata & Color Profiles
 
-## Platform Notes
+- Metadata preserved by default (`stripMetadata: false`)
+- Color profiles (ICC) kept when metadata is preserved
+- Use `--strip-metadata` for privacy or maximal size reduction
 
-- Windows:
-  - `--delete-originals` is not supported / unreliable due to file locking.
-  - Recommended workflow: bulk optimize, then manually delete originals when satisfied.
-- Linux/macOS:
-  - Normal behavior with proper permissions.
+```bash
+optimg ./photos --bulk --strip-metadata
+```
 
-## Further Docs
-- Examples & Recipes → `docs/EXAMPLES.md`
+## 🖥️ Platform Notes
+
+- Windows
+  - `--delete-originals` is not supported due to file locking behavior
+  - Use `--bulk` or `--bulk-inplace` without deletion and clean up manually
+
+- Linux/macOS
+  - File operations work with proper permissions
+
+## 📚 Further Docs
+
+- Examples → `docs/EXAMPLES.md`
 - Troubleshooting → `docs/TROUBLESHOOTING.md`
-- Programmatic Usage → `docs/PROGRAMMATIC_USAGE.md`
+- Configuration & Programmatic Usage → `docs/PROGRAMMATIC_USAGE.md`
 - Test Results → `docs/TEST_RESULTS.md`
 
-## Contributing
-- PRs welcome; include tests and update docs where applicable.
-- Tests: `npm test`
-- Lint: `npm run lint`
+## 🤝 Contributing & License
 
-## License
-MIT
+- License: MIT → `LICENSE`
+- Issues: https://github.com/jacobfreedom/optimg-cli/issues
+- Discussions: https://github.com/jacobfreedom/optimg-cli/discussions
+

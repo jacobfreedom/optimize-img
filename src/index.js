@@ -21,7 +21,7 @@ class ImageOptimizer {
       height: null,
       resize: null,
       percent: null,
-      lossless: false,
+      lossless: true,
       ...options
     }
 
@@ -134,6 +134,9 @@ class ImageOptimizer {
     this.progressBar.start(files.length, 0)
 
     const limit = pLimit(parseInt(this.options.parallel, 10))
+
+    // Track bulk root to preserve directory structure in outputs
+    this.bulkRoot = dirPath
 
     const promises = files.map(filePath =>
       limit(async () => {
@@ -378,6 +381,10 @@ class ImageOptimizer {
       // If custom output is a directory, preserve filename
       if (customOutput.endsWith('/') || customOutput.endsWith('\\')) {
         const basename = path.basename(inputPath, path.extname(inputPath))
+        if (bulk && this.bulkRoot) {
+          const relDir = path.relative(this.bulkRoot, path.dirname(inputPath))
+          return path.join(customOutput, relDir, `${basename}.${format}`)
+        }
         return path.join(customOutput, `${basename}.${format}`)
       }
       return customOutput
@@ -386,8 +393,13 @@ class ImageOptimizer {
     const inputDir = path.dirname(inputPath)
     const inputName = path.basename(inputPath, path.extname(inputPath))
 
-    // For bulk operations, create an optimized folder with guard naming
     if (bulk) {
+      if (this.options.bulkInplace) {
+        if (this.options.deleteOriginals) {
+          return path.join(inputDir, `${inputName}.${format}`)
+        }
+        return path.join(inputDir, `${inputName}-optimized.${format}`)
+      }
       const optimizedDir = await this.resolveOptimizedDir(inputDir)
       await fs.ensureDir(optimizedDir)
       return path.join(optimizedDir, `${inputName}.${format}`)

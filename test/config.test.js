@@ -222,7 +222,7 @@ describe('Configuration', () => {
         preset: 'default',
         width: null,
         height: null,
-        lossless: false
+        lossless: true
       })
     })
   })

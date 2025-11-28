@@ -243,9 +243,9 @@ optimg <input> --yes              # Skip confirmation prompts
 
 ### Lossless Compression
 
-By default, lossless compression is disabled (`lossless: false`).
+By default, lossless compression is enabled (`lossless: true`).
 
-Enable it when the target format supports it (e.g., WebP, AVIF):
+Disable it when you prefer smaller outputs over exact preservation:
 
 ```bash
 # CLI
@@ -256,7 +256,7 @@ optimg photo.jpg --loseless
 
 # Config file (JSON)
 {
-  "lossless": false,            // default
+  "lossless": true,
   "stripMetadata": false,
   "keepOriginals": true
 }
@@ -272,29 +272,26 @@ Notes:
 - JPEG does not support true lossless via quality settings; use PNG/WebP/AVIF when you need lossless.
 ```
 
-### Guard: Optimized Folder Naming & Skipping
+### Bulk Output Modes
 
-By default, bulk operations avoid re-processing previously optimized images and auto-select a safe output folder name.
+Two modes for bulk processing:
 
-Behavior:
-- Skips any input files under directories named `optimized`, `optimized1`, `optimized2`, etc.
-- Chooses output folder under each source directory as first available: `optimized` → `optimized1` → `optimized2` …
-- Prevents nested `optimized/optimized/...` structures on repeated runs.
+- Separate folder (default):
+  - Skips any input files under `optimized*` directories
+  - Chooses output folder: `optimized` → `optimized1` → `optimized2` …
+  - Prevents nested `optimized/optimized/...` structures on repeated runs
+  - Example:
+    ```bash
+    optimg ./images --bulk
+    ```
 
-Examples:
-```bash
-# First run: creates ./images/optimized/
-optimg ./images --bulk
-
-# Second run: creates ./images/optimized1/
-optimg ./images --bulk
-
-# Third run: creates ./images/optimized2/
-optimg ./images --bulk
-
-# Show help
-optimg --help
-```
+- In-place (outputs next to originals):
+  - Preserves original directory structure without creating new folders
+  - Uses `-optimized` suffix unless `--delete-originals` is set
+  - Example:
+    ```bash
+    optimg ./images --bulk-inplace --yes
+    ```
 
 Error handling:
 - Permission errors provide clear messages and suggestions.

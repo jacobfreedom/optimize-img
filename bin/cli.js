@@ -26,6 +26,7 @@ program
   .option('--keep-metadata', 'Preserve EXIF/ICC metadata (default: metadata is stripped)')
   .option('--delete-originals', 'Delete original files after optimization (use with caution)')
   .option('--bulk', 'Process entire directory (creates optimized folder)')
+  .option('--bulk-inplace', 'Process entire directory in-place (outputs next to originals)')
   .option('--parallel <number>', 'Number of parallel processes', '4')
   .option('--verbose', 'Enable verbose logging')
   .option('--config <path>', 'Path to configuration file')
@@ -100,6 +101,7 @@ program
         keepMetadata: rawArgs.some(arg => arg === '--keep-metadata'),
         deleteOriginals: rawArgs.some(arg => arg === '--delete-originals'),
         bulk: rawArgs.some(arg => arg === '--bulk'),
+        bulkInplace: rawArgs.some(arg => arg === '--bulk-inplace'),
         parallel: rawArgs.some(arg => arg === '--parallel'),
         verbose: rawArgs.some(arg => arg === '--verbose'),
         lossless: rawArgs.some(arg => arg === '--lossless' || arg === '--loseless')
@@ -126,6 +128,7 @@ program
       if (explicitOptions.bulk) finalOptions.bulk = true
       if (explicitOptions.parallel) finalOptions.parallel = parseInt(options.parallel)
       if (explicitOptions.lossless) finalOptions.lossless = true
+      if (explicitOptions.bulkInplace) finalOptions.bulkInplace = true
 
       const optimizer = new ImageOptimizer(finalOptions)
 

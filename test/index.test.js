@@ -272,7 +272,7 @@ describe('ImageOptimizer', () => {
   describe('getFormatOptions', () => {
     it('should return correct options for webp format', () => {
       const options = optimizer.getFormatOptions('webp', 80)
-      expect(options).toEqual({ quality: 80, effort: 6, lossless: false })
+      expect(options).toEqual({ quality: 80, effort: 6, lossless: true })
     })
 
     it('should return correct options for jpeg format', () => {
@@ -291,7 +291,7 @@ describe('ImageOptimizer', () => {
 
     it('should return correct options for avif format', () => {
       const options = optimizer.getFormatOptions('avif', 75)
-      expect(options).toEqual({ quality: 75, effort: 5, lossless: false })
+      expect(options).toEqual({ quality: 75, effort: 5, lossless: true })
     })
   })
 

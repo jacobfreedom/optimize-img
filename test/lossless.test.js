@@ -27,7 +27,7 @@ describe('Lossless compression behavior', () => {
 
   test('respects default and override for lossless flag', async () => {
     const defaultOpt = new ImageOptimizer()
-    expect(defaultOpt.options.lossless).toBe(false)
+    expect(defaultOpt.options.lossless).toBe(true)
 
     const lossyOut = path.join(tmpDir, 'sample-optimized.webp')
     const losslessOut = path.join(tmpDir, 'sample-lossless.webp')

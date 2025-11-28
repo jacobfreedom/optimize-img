@@ -43,7 +43,7 @@ const DEFAULT_CONFIG = {
   preset: 'default',
   width: null,
   height: null,
-  lossless: false
+  lossless: true
 }
 
 async function loadConfig(configPath) {

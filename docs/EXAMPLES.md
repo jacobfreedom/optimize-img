@@ -30,7 +30,7 @@ project/
 │       ├── character.jpg
 │       └── environment.png
 
-# After: optimize-img ./assets --bulk
+# After: optimg ./assets --bulk
 project/
 ├── assets/
 │   ├── images/
@@ -64,33 +64,33 @@ project/
 
 ```bash
 # Create multiple sizes for responsive images
-optimize-img hero.jpg --width 1920 --format webp --quality 90 -o hero-1920.webp
-optimize-img hero.jpg --width 1200 --format webp --quality 85 -o hero-1200.webp
-optimize-img hero.jpg --width 768 --format webp --quality 80 -o hero-768.webp
-optimize-img hero.jpg --width 480 --format webp --quality 75 -o hero-480.webp
+optimg hero.jpg --width 1920 --format webp --quality 90 -o hero-1920.webp
+optimg hero.jpg --width 1200 --format webp --quality 85 -o hero-1200.webp
+optimg hero.jpg --width 768 --format webp --quality 80 -o hero-768.webp
+optimg hero.jpg --width 480 --format webp --quality 75 -o hero-480.webp
 ```
 
 ### E-commerce Product Images
 
 ```bash
 # Main product images (high quality)
-optimize-img ./products --bulk --preset quality --width 1200
+optimg ./products --bulk --preset quality --width 1200
 
 # Thumbnails (smaller, faster loading)
-optimize-img ./products --bulk --preset performant --width 300 --output ./thumbnails
+optimg ./products --bulk --preset performant --width 300 --output ./thumbnails
 
 # Mobile-optimized versions
-optimize-img ./products --bulk --preset balanced --width 600 --output ./mobile
+optimg ./products --bulk --preset balanced --width 600 --output ./mobile
 ```
 
 ### Static Site Generators
 
 ```bash
 # Hugo/Jekyll/Gatsby workflow
-optimize-img ./static/images --bulk --preset balanced --format webp
+optimg ./static/images --bulk --preset balanced --format webp
 
 # Keep originals for fallback
-optimize-img ./static/images --bulk --preset balanced --format jpeg --output ./static/images/jpeg-fallback
+optimg ./static/images --bulk --preset balanced --format jpeg --output ./static/images/jpeg-fallback
 ```
 
 ## 🎮 3D & Game Development
@@ -99,36 +99,36 @@ optimize-img ./static/images --bulk --preset balanced --format jpeg --output ./s
 
 ```bash
 # High-quality base textures
-optimize-img ./textures/source --bulk --resize 1/1 --preset quality --format webp --output ./textures/high
+optimg ./textures/source --bulk --resize 1/1 --preset quality --format webp --output ./textures/high
 
 # Medium quality for most objects
-optimize-img ./textures/source --bulk --resize 1/2 --preset balanced --format webp --output ./textures/medium
+optimg ./textures/source --bulk --resize 1/2 --preset balanced --format webp --output ./textures/medium
 
 # Low quality for background/less important objects
-optimize-img ./textures/source --bulk --resize 1/4 --preset performant --format webp --output ./textures/low
+optimg ./textures/source --bulk --resize 1/4 --preset performant --format webp --output ./textures/low
 ```
 
 ### PBR Material Textures
 
 ```bash
 # Albedo/Diffuse maps (keep color accuracy - metadata preserved by default)
-optimize-img ./textures/albedo --bulk --preset quality
+optimg ./textures/albedo --bulk --preset quality
 
 # Normal maps (preserve detail - metadata preserved by default)
-optimize-img ./textures/normal --bulk --preset quality --format png
+optimg ./textures/normal --bulk --preset quality --format png
 
 # Roughness/Metalness (technical maps, strip metadata for size)
-optimize-img ./textures/technical --bulk --preset balanced --strip-metadata
+optimg ./textures/technical --bulk --preset balanced --strip-metadata
 ```
 
 ### WebGL/WebGPU Optimization
 
 ```bash
 # Power-of-two textures for better GPU performance
-optimize-img ./webgl/textures --bulk --resize 1/2 --width 512 --height 512 --preset performant
+optimg ./webgl/textures --bulk --resize 1/2 --width 512 --height 512 --preset performant
 
 # Compressed formats for web
-optimize-img ./webgl/textures --bulk --format webp --quality 75 --preset balanced
+optimg ./webgl/textures --bulk --format webp --quality 75 --preset balanced
 ```
 
 ## 🚀 Performance Optimization
@@ -137,11 +137,11 @@ optimize-img ./webgl/textures --bulk --format webp --quality 75 --preset balance
 
 ```bash
 # Process thousands of images efficiently
-optimize-img ./massive-collection --bulk --preset performant --parallel 16 --yes
+optimg ./massive-collection --bulk --preset performant --parallel 16 --yes
 
 # Split into smaller batches for memory management
 for dir in ./batches/*/; do
-  optimize-img "$dir" --bulk --preset balanced --parallel 8
+  optimg "$dir" --bulk --preset balanced --parallel 8
 done
 ```
 
@@ -149,11 +149,11 @@ done
 
 ```bash
 # Reduce memory usage for large files
-optimize-img ./large-images --bulk --preset performant --parallel 2 --quality 70
+optimg ./large-images --bulk --preset performant --parallel 2 --quality 70
 
 # Process in stages
-optimize-img ./stage1 --bulk --preset performant
-optimize-img ./stage2 --bulk --preset performant
+optimg ./stage1 --bulk --preset performant
+optimg ./stage2 --bulk --preset performant
 ```
 
 #### Real-World Test Results
@@ -377,11 +377,11 @@ jobs:
         with:
           node-version: '18'
       
-      - name: Install optimize-img
-        run: npm install -g optimize-img
+      - name: Install optimg-cli
+        run: npm install -g optimg-cli
       
       - name: Optimize images
-        run: optimize-img ./images --bulk --preset balanced
+        run: optimg ./images --bulk --preset balanced
       
       - name: Commit changes
         run: |

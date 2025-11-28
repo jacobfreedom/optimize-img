@@ -127,7 +127,7 @@ describe('Configuration', () => {
       expect(preset).toEqual({
         format: 'webp',
         quality: 60,
-        stripMetadata: true,
+        stripMetadata: false,
         keepOriginals: true
       })
     })
@@ -221,7 +221,8 @@ describe('Configuration', () => {
         verbose: false,
         preset: 'default',
         width: null,
-        height: null
+        height: null,
+        lossless: false
       })
     })
   })

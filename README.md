@@ -2,7 +2,7 @@
 
 A high-performance image optimization CLI for developers with modern format support, bulk processing of folders and subfolders, and presets.
 
-[![npm version](https://badge.fury.io/js/optimize-img.svg)](https://badge.fury.io/js/optimize-img)
+[![npm version](https://img.shields.io/npm/v/optimg-cli.svg)](https://www.npmjs.com/package/optimg-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-optimize--img-181717.svg)](https://github.com/jacobfreedom)
 
@@ -11,10 +11,10 @@ A high-performance image optimization CLI for developers with modern format supp
 ## ⚡ TL;DR
 
 ```bash
-npm install -g optimize-img
+npm install -g optimg-cli
 
 # Optimize all images in a folder
-optimize-img ./images --bulk --preset balanced
+optimg ./images --bulk --preset balanced
 ```
 
 ---
@@ -60,10 +60,10 @@ Example:
 
 ```bash
 # PNG → WebP (default)
-optimize-img image.png
+optimg image.png
 
 # JPEG → AVIF
-optimize-img photo.jpg --format avif
+optimg photo.jpg --format avif
 ```
 
 ---
@@ -73,27 +73,27 @@ optimize-img photo.jpg --format avif
 ### CLI (Global – recommended)
 
 ```bash
-npm install -g optimize-img
+npm install -g optimg-cli
 ```
 
 Then:
 
 ```bash
-optimize-img --help
+optimg --help
 ```
 
 ### Project (Local)
 
 ```bash
-npm install optimize-img
+npm install optimg-cli
 ```
 
-To use `optimize-img` in your project's `package.json` scripts, you can add it like this:
+To use `optimg` in your project's `package.json` scripts, you can add it like this:
 
 ```json
 {
   "scripts": {
-    "optimize": "optimize-img ./path/to/images --bulk --preset balanced"
+    "optimize": "optimg ./path/to/images --bulk --preset balanced"
   }
 }
 ```
@@ -114,35 +114,35 @@ Then run it with `npm run optimize`.
 
 ```bash
 # Basic WebP optimization (default format)
-optimize-img photo.jpg
+optimg photo.jpg
 
 # Custom quality
-optimize-img photo.jpg --quality 90
+optimg photo.jpg --quality 90
 
 # Resize + change format
-optimize-img photo.png --width 800 --format jpeg
+optimg photo.png --width 800 --format jpeg
 
 # Ratio-based resize (50%)
-optimize-img texture.jpg --resize 1/2
+optimg texture.jpg --resize 1/2
 
 # Percent-based resize
-optimize-img photo.jpg --percent 25
+optimg photo.jpg --percent 25
 
 # Explicit output path
-optimize-img input.jpg -o output.webp
+optimg input.jpg -o output.webp
 ```
 
 ### Bulk / Folders
 
 ```bash
 # Recursively process a directory (creates ./optimized by default)
-optimize-img ./images --bulk
+optimg ./images --bulk
 
 # With custom settings
-optimize-img ./assets --bulk --format webp --quality 75 --parallel 8
+optimg ./assets --bulk --format webp --quality 75 --parallel 8
 
 # Custom output directory
-optimize-img ./images --bulk -o ./optimized/
+optimg ./images --bulk -o ./optimized/
 ```
 
 ---
@@ -176,9 +176,9 @@ Think of presets as **one-click profiles**:
 Examples:
 
 ```bash
-optimize-img photo.jpg --preset quality
-optimize-img ./images --bulk --preset balanced
-optimize-img ./images --bulk --preset performant
+optimg photo.jpg --preset quality
+optimg ./images --bulk --preset balanced
+optimg ./images --bulk --preset performant
 ```
 
 ---
@@ -189,13 +189,13 @@ optimize-img ./images --bulk --preset performant
 
 ```bash
 # 4K → 2K
-optimize-img texture_4k.jpg --resize 1/2
+optimg texture_4k.jpg --resize 1/2
 
 # 4K → 1K
-optimize-img texture_4k.jpg --resize 1/4
+optimg texture_4k.jpg --resize 1/4
 
 # Custom
-optimize-img texture.jpg --resize 2/3
+optimg texture.jpg --resize 2/3
 ```
 
 ---
@@ -206,38 +206,70 @@ optimize-img texture.jpg --resize 2/3
 
 ```bash
 # Input/Output
-optimize-img <input>                 # Input file or directory
-optimize-img <input> -o <output>     # Custom output path
+optimg <input>                 # Input file or directory
+optimg <input> -o <output>     # Custom output path
 
 # Format & Quality
-optimize-img <input> --format webp   # Output format (webp, jpeg, png, avif)
-optimize-img <input> --quality 85    # Quality (0-100, default: 80)
+optimg <input> --format webp   # Output format (webp, jpeg, png, avif)
+optimg <input> --quality 85    # Quality (0-100, default: 80)
+optimg <input> --lossless      # Use lossless compression when supported
+optimg <input> --loseless      # Alias for --lossless
 
 # Resizing
-optimize-img <input> --width 800    # Resize width
-optimize-img <input> --height 600    # Resize height
-optimize-img <input> --resize 1/2   # Resize by ratio
-optimize-img <input> --percent 50    # Resize by percentage
+optimg <input> --width 800    # Resize width
+optimg <input> --height 600    # Resize height
+optimg <input> --resize 1/2   # Resize by ratio
+optimg <input> --percent 50    # Resize by percentage
 
 # Presets
-optimize-img <input> --preset quality    # Quality preset (default, balanced, quality, performant)
+optimg <input> --preset quality    # Quality preset (default, balanced, quality, performant)
 ```
 
 ### Advanced Options
 
 ```bash
 # Bulk Processing
-optimize-img <directory> --bulk          # Process entire directory recursively
-optimize-img <directory> --bulk --parallel 8  # Parallel processing
-
+optimg <directory> --bulk          # Process entire directory recursively
+optimg <directory> --bulk --parallel 8  # Parallel processing
+```bash
 # Metadata & File Operations
-optimize-img <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
-optimize-img <input> --delete-originals  # Delete original files after optimization
-
+optimg <input> --strip-metadata     # Remove EXIF/ICC metadata for privacy/size
+optimg <input> --delete-originals  # Delete original files after optimization
+```bash
 # Configuration
-optimize-img <input> --config ./config.json  # Custom configuration file
-optimize-img <input> --verbose          # Enable verbose logging
-optimize-img <input> --yes              # Skip confirmation prompts
+optimg <input> --config ./config.json  # Custom configuration file
+optimg <input> --verbose          # Enable verbose logging
+optimg <input> --yes              # Skip confirmation prompts
+
+### Lossless Compression
+
+By default, lossless compression is disabled (`lossless: false`).
+
+Enable it when the target format supports it (e.g., WebP, AVIF):
+
+```bash
+# CLI
+optimg photo.jpg --format webp --lossless
+
+# Alias supported (common misspelling):
+optimg photo.jpg --loseless
+
+# Config file (JSON)
+{
+  "lossless": false,            // default
+  "stripMetadata": false,
+  "keepOriginals": true
+}
+
+# Override in config using common alias
+{
+  "loseless": true              // normalized to lossless: true
+}
+```
+
+Notes:
+- Lossless may increase file size compared to lossy settings.
+- JPEG does not support true lossless via quality settings; use PNG/WebP/AVIF when you need lossless.
 ```
 
 ### Platform-Specific Notes
@@ -245,7 +277,7 @@ optimize-img <input> --yes              # Skip confirmation prompts
 - **Windows**: The `--delete-originals` flag is **NOT SUPPORTED** on Windows systems due to fundamental Windows file system locking behavior. Files remain locked and cannot be deleted reliably. Use alternative workflows for Windows environments.
 - **Linux/macOS**: File operations generally work as expected with proper permissions.
 
-Use `optimize-img --help` for the complete list of options and descriptions.
+Use `optimg --help` for the complete list of options and descriptions.
 
 ### Percentages
 
@@ -325,13 +357,13 @@ optimize-img ./images --bulk --delete-originals
 
 ```bash
 # 4K → 2K (high quality)
-optimize-img ./textures/4k --bulk --resize 1/2 --format webp --quality 90
+optimg ./textures/4k --bulk --resize 1/2 --format webp --quality 90
 
 # 2K → 1K (mid-tier)
-optimize-img ./textures/2k --bulk --resize 1/2 --format webp --quality 80
+optimg ./textures/2k --bulk --resize 1/2 --format webp --quality 80
 
 # Mobile / low-spec
-optimize-img ./textures/final --bulk --resize 1/2 --preset performant
+optimg ./textures/final --bulk --resize 1/2 --preset performant
 ```
 
 Typical pattern:
@@ -485,7 +517,7 @@ Issues and PRs welcome.
 Start with:
 
 ```bash
-optimize-img ./images --bulk --preset balanced
+optimg ./images --bulk --preset balanced
 ```
 
 If it looks good, wire it into your build/CI and forget about it.

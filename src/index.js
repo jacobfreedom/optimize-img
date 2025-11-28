@@ -13,7 +13,7 @@ class ImageOptimizer {
     this.options = {
       format: 'webp',
       quality: 80,
-      stripMetadata: false, // metadata preserved by default
+      stripMetadata: false,
       keepOriginals: true,
       parallel: 4,
       verbose: false,
@@ -21,6 +21,7 @@ class ImageOptimizer {
       height: null,
       resize: null,
       percent: null,
+      lossless: false,
       ...options
     }
 
@@ -353,14 +354,14 @@ class ImageOptimizer {
   getFormatOptions(format, quality) {
     switch (format.toLowerCase()) {
       case 'webp':
-        return { quality, effort: 6 }
+        return { quality, effort: 6, lossless: !!this.options.lossless }
       case 'jpeg':
       case 'jpg':
         return { quality, mozjpeg: true }
       case 'png':
         return { quality, compressionLevel: 9, adaptiveFiltering: false }
       case 'avif':
-        return { quality, effort: 5 }
+        return { quality, effort: 5, lossless: !!this.options.lossless }
       default:
         return { quality }
     }

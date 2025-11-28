@@ -91,7 +91,7 @@ describe('ImageOptimizer', () => {
       const defaultOptimizer = new ImageOptimizer()
       expect(defaultOptimizer.options.format).toBe('webp')
       expect(defaultOptimizer.options.quality).toBe(80)
-      expect(defaultOptimizer.options.stripMetadata).toBe(true)
+      expect(defaultOptimizer.options.stripMetadata).toBe(false)
     })
 
     it('should create instance with custom options', () => {
@@ -272,7 +272,7 @@ describe('ImageOptimizer', () => {
   describe('getFormatOptions', () => {
     it('should return correct options for webp format', () => {
       const options = optimizer.getFormatOptions('webp', 80)
-      expect(options).toEqual({ quality: 80, effort: 6 })
+      expect(options).toEqual({ quality: 80, effort: 6, lossless: false })
     })
 
     it('should return correct options for jpeg format', () => {
@@ -291,7 +291,7 @@ describe('ImageOptimizer', () => {
 
     it('should return correct options for avif format', () => {
       const options = optimizer.getFormatOptions('avif', 75)
-      expect(options).toEqual({ quality: 75, effort: 5 })
+      expect(options).toEqual({ quality: 75, effort: 5, lossless: false })
     })
   })
 

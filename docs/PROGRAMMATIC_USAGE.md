@@ -1,7 +1,7 @@
 ## 🔧 Programmatic Usage
 
 ```js
-const ImageOptimizer = require('optimize-img');
+const ImageOptimizer = require('optimg-cli');
 
 const optimizer = new ImageOptimizer({
   format: 'webp',
@@ -39,7 +39,7 @@ await photoOptimizer.run('./client-photos');
 
 ## ⚙️ Configuration
 
-### `.optimize-imgrc`
+### `.optimgrc` (preferred) or `.optimize-imgrc` (supported)
 
 ```json
 {
@@ -54,7 +54,7 @@ await photoOptimizer.run('./client-photos');
 }
 ```
 
-### `optimize-img.config.js`
+### `optimg.config.js` (preferred) or `optimize-img.config.js` (supported)
 
 ```js
 module.exports = {
@@ -81,13 +81,13 @@ module.exports = {
 > Config keys use **camelCase** (`stripMetadata`).
 > CLI uses **kebab-case** (`--strip-metadata`).
 > CLI flags override config.
-> If both files exist, `optimize-img.config.js` wins.
+> If both files exist, `optimg.config.js` wins.
 
 ## ⚠️ Platform-Specific Considerations
 
 ### Windows File System Limitations
 
-When using optimize-img programmatically on **Windows systems**, be aware of the following limitations:
+When using optimg programmatically on **Windows systems**, be aware of the following limitations:
 
 ```js
 // Windows-specific considerations

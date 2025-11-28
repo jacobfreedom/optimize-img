@@ -36,40 +36,53 @@ const SUPPORTED_FORMATS = {
 const DEFAULT_CONFIG = {
   format: 'webp',
   quality: 80,
-  stripMetadata: false,
+  stripMetadata: true,
   keepOriginals: true,
   parallel: 4,
   verbose: false,
   preset: 'default',
   width: null,
-  height: null
+  height: null,
+  lossless: false
 }
 
 async function loadConfig(configPath) {
-  const explorer = cosmiconfigSync('optimize-img')
+  const explorerPrimary = cosmiconfigSync('optimg')
+  const explorerLegacy = cosmiconfigSync('optimize-img')
 
   let result
   if (configPath) {
-    result = explorer.load(path.resolve(configPath))
+    const resolved = path.resolve(configPath)
+    result = explorerPrimary.load(resolved) || explorerLegacy.load(resolved)
   } else {
-    result = explorer.search()
+    result = explorerPrimary.search() || explorerLegacy.search()
   }
 
   const config = result ? result.config : {}
 
+  // Normalize common misspelling: "loseless" → "lossless"
+  if (config && typeof config === 'object') {
+    if (Object.prototype.hasOwnProperty.call(config, 'loseless') && !Object.prototype.hasOwnProperty.call(config, 'lossless')) {
+      config.lossless = config.loseless
+      delete config.loseless
+    }
+  }
+
   // Apply preset if specified
   if (config.preset && PRESETS[config.preset]) {
-    return {
+    const merged = {
       ...DEFAULT_CONFIG,
       ...PRESETS[config.preset],
       ...config
     }
+    return merged
   }
 
-  return {
+  const merged = {
     ...DEFAULT_CONFIG,
     ...config
   }
+  return merged
 }
 
 function getPreset(presetName) {

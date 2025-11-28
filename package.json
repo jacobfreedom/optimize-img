@@ -1,9 +1,10 @@
 {
-  "name": "optimize-img",
-  "version": "1.0.0",
+  "name": "optimg-cli",
+  "version": "1.0.4",
   "description": "High-performance image optimization CLI with modern format support, bulk processing, and presets for developers",
   "main": "src/index.js",
   "bin": {
+    "optimg": "./bin/cli.js",
     "optimize-img": "./bin/cli.js"
   },
   "scripts": {

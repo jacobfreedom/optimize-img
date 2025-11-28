@@ -9,7 +9,7 @@ const { loadConfig } = require('../src/config')
 const program = new Command()
 
 program
-  .name('optimize-img')
+  .name('optimg')
   .description('A comprehensive, high-performance image optimization tool')
   .version(version, '-v, --version', 'output the current version')
 
@@ -30,6 +30,8 @@ program
   .option('--verbose', 'Enable verbose logging')
   .option('--config <path>', 'Path to configuration file')
   .option('--yes', 'Skip confirmation prompts (use with caution)')
+  .option('--lossless', 'Use lossless compression when supported')
+  .option('--loseless', 'Alias for --lossless')
   .action(async (input, options) => {
     try {
       if (!input) {
@@ -99,7 +101,8 @@ program
         deleteOriginals: rawArgs.some(arg => arg === '--delete-originals'),
         bulk: rawArgs.some(arg => arg === '--bulk'),
         parallel: rawArgs.some(arg => arg === '--parallel'),
-        verbose: rawArgs.some(arg => arg === '--verbose')
+        verbose: rawArgs.some(arg => arg === '--verbose'),
+        lossless: rawArgs.some(arg => arg === '--lossless' || arg === '--loseless')
       }
 
       // Merge config with CLI options, prioritizing explicitly provided CLI options
@@ -122,6 +125,7 @@ program
       if (explicitOptions.deleteOriginals) finalOptions.deleteOriginals = true
       if (explicitOptions.bulk) finalOptions.bulk = true
       if (explicitOptions.parallel) finalOptions.parallel = parseInt(options.parallel)
+      if (explicitOptions.lossless) finalOptions.lossless = true
 
       const optimizer = new ImageOptimizer(finalOptions)
 
